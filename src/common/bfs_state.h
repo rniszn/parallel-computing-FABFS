@@ -15,4 +15,5 @@ struct BfsState {
 };
 
 BfsState make_state(const Graph& g, vid_t src);
+void reset_level(BfsState& st);
 void free_state(BfsState& st);

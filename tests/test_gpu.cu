@@ -250,17 +250,17 @@ int main(int argc, char** argv) {
       stB.level = stA.level;
 
       // Expand stA on full range [0, fsize)
+      reset_level(stA);
       expand_level_gpu(gg, stA, 0, fsize);
 
       // Expand stB in two calls: [0, fsize/2) and [fsize/2, fsize)
+      reset_level(stB);
       size_t mid = fsize / 2;
       expand_level_gpu(gg, stB, 0, mid);
-      std::vector<vid_t> nextB(stB.next, stB.next + stB.next_size);
-
       expand_level_gpu(gg, stB, mid, fsize);
-      nextB.insert(nextB.end(), stB.next, stB.next + stB.next_size);
 
       std::vector<vid_t> nextA(stA.next, stA.next + stA.next_size);
+      std::vector<vid_t> nextB(stB.next, stB.next + stB.next_size);
       std::sort(nextA.begin(), nextA.end());
       std::sort(nextB.begin(), nextB.end());
 
@@ -289,6 +289,7 @@ int main(int argc, char** argv) {
     BfsState st = make_state(f.g, f.source);
 
     // CPU level 0
+    reset_level(st);
     expand_level_cpu(f.g, st, 0, st.frontier_size, 4);
     std::swap(st.frontier, st.next);
     st.frontier_size = st.next_size;
@@ -297,6 +298,7 @@ int main(int argc, char** argv) {
 
     // GPU level 1
     if (st.frontier_size > 0) {
+      reset_level(st);
       expand_level_gpu(gg, st, 0, st.frontier_size);
       std::swap(st.frontier, st.next);
       st.frontier_size = st.next_size;
@@ -306,6 +308,7 @@ int main(int argc, char** argv) {
 
     // Complete remaining levels on GPU
     while (st.frontier_size > 0) {
+      reset_level(st);
       expand_level_gpu(gg, st, 0, st.frontier_size);
       std::swap(st.frontier, st.next);
       st.frontier_size = st.next_size;
@@ -336,6 +339,7 @@ int main(int argc, char** argv) {
     BfsState st = make_state(f.g, f.source);
 
     // GPU level 0
+    reset_level(st);
     expand_level_gpu(gg, st, 0, st.frontier_size);
     std::swap(st.frontier, st.next);
     st.frontier_size = st.next_size;
@@ -344,6 +348,7 @@ int main(int argc, char** argv) {
 
     // CPU level 1
     if (st.frontier_size > 0) {
+      reset_level(st);
       expand_level_cpu(f.g, st, 0, st.frontier_size, 4);
       std::swap(st.frontier, st.next);
       st.frontier_size = st.next_size;
@@ -353,6 +358,8 @@ int main(int argc, char** argv) {
 
     // Complete remaining levels on CPU
     while (st.frontier_size > 0) {
+      reset_level(st);
+      expand_level_cpu(f.g, st, 0, st.frontier_size, 4);
       expand_level_cpu(f.g, st, 0, st.frontier_size, 4);
       std::swap(st.frontier, st.next);
       st.frontier_size = st.next_size;
@@ -486,6 +493,7 @@ int main(int argc, char** argv) {
           auto t0 = std::chrono::high_resolution_clock::now();
           BfsState st = make_state(g, 0);
           while (st.frontier_size > 0) {
+            reset_level(st);
             expand_level_gpu(gg, st, 0, st.frontier_size);
             std::swap(st.frontier, st.next);
             st.frontier_size = st.next_size;
@@ -516,6 +524,7 @@ int main(int argc, char** argv) {
             size_t cur_fsize = st.frontier_size;
             int32_t cur_level = st.level;
 
+            reset_level(st);
             cudaEventRecord(ev_start, 0);
             uint64_t edges = expand_level_gpu(gg, st, 0, cur_fsize);
             cudaEventRecord(ev_stop, 0);
