@@ -1,6 +1,7 @@
 #include "bfs_omp.h"
 #include <algorithm>
 #include <atomic>
+#include <cstring>
 #include <omp.h>
 #include <stdexcept>
 #include <utility>
@@ -61,23 +62,28 @@ uint64_t expand_level_cpu(const Graph& g, BfsState& st, size_t fbegin, size_t fe
   }
 
   uint64_t total_edges = 0;
+  size_t total_new = 0;
   for (int t = 0; t < threads; ++t) {
     total_edges += thread_edges[t];
+    total_new += local_buffers[t].size();
   }
 
-  // After the join: copy local buffers into st.next in thread order
-  if (fbegin == 0) {
-    st.counts[0] = 0;
-  }
-
-  for (int t = 0; t < threads; ++t) {
-    for (vid_t v : local_buffers[t]) {
-      st.next[st.counts[0]++] = v;
+  // After the join: copy local buffers into st.next in thread order using atomic reservation
+  if (total_new > 0) {
+    unsigned long long base_idx =
+        __atomic_fetch_add(&st.counts[0], (unsigned long long)total_new, __ATOMIC_RELAXED);
+    size_t cursor = base_idx;
+    for (int t = 0; t < threads; ++t) {
+      if (!local_buffers[t].empty()) {
+        std::memcpy(st.next + cursor, local_buffers[t].data(),
+                    local_buffers[t].size() * sizeof(vid_t));
+        cursor += local_buffers[t].size();
+      }
     }
   }
 
+  __atomic_fetch_add(&st.counts[1], (unsigned long long)total_edges, __ATOMIC_RELAXED);
   st.next_size = st.counts[0];
-  st.counts[1] += total_edges;
 
   return total_edges;
 }
@@ -90,7 +96,7 @@ std::vector<int32_t> bfs_cpu(const Graph& g, vid_t src, int threads) {
   BfsState st = make_state(g, src);
 
   while (st.frontier_size > 0) {
-    st.counts[0] = 0;
+    reset_level(st);
     expand_level_cpu(g, st, 0, st.frontier_size, threads);
     std::swap(st.frontier, st.next);
     st.frontier_size = st.next_size;

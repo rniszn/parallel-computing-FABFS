@@ -32,11 +32,8 @@ __global__ void expand_kernel(GpuGraph gg, int32_t* dist, const vid_t* frontier,
 }
 
 uint64_t expand_level_gpu(const GpuGraph& gg, BfsState& st, size_t fbegin, size_t fend) {
-  st.counts[0] = 0;
-  st.counts[1] = 0;
-
   if (fbegin >= fend) {
-    st.next_size = 0;
+    st.next_size = static_cast<size_t>(st.counts[0]);
     return 0;
   }
 
@@ -74,6 +71,7 @@ std::vector<int32_t> bfs_gpu(const Graph& g, vid_t src) {
   BfsState st = make_state(g, src);
 
   while (st.frontier_size > 0) {
+    reset_level(st);
     expand_level_gpu(gg, st, 0, st.frontier_size);
     std::swap(st.frontier, st.next);
     st.frontier_size = st.next_size;

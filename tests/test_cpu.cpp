@@ -241,9 +241,11 @@ int main(int argc, char** argv) {
       stB.level = stA.level;
 
       // Expand stA on full range [0, fsize)
+      reset_level(stA);
       expand_level_cpu(f.g, stA, 0, fsize, 4);
 
       // Expand stB in two halves: [0, fsize/2) and [fsize/2, fsize)
+      reset_level(stB);
       size_t mid = fsize / 2;
       expand_level_cpu(f.g, stB, 0, mid, 4);
       expand_level_cpu(f.g, stB, mid, fsize, 4);

@@ -42,6 +42,14 @@ BfsState make_state(const Graph& g, vid_t src) {
   return st;
 }
 
+void reset_level(BfsState& st) {
+  if (st.counts) {
+    st.counts[0] = 0;
+    st.counts[1] = 0;
+  }
+  st.next_size = 0;
+}
+
 void free_state(BfsState& st) {
   if (st.dist) {
     CHECK_CUDA(cudaFree(st.dist));
