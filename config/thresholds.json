@@ -1,0 +1,16 @@
+{
+  "calibration_commit": "PENDING",
+  "status": "placeholder",
+  "T_min": 1,
+  "T_CV": 1.0,
+  "T_par": 0,
+  "alpha": 0.5,
+  "P_cpu_edges_per_s": 0,
+  "P_gpu_edges_per_s": 0,
+  "L_launch_us": 0.0,
+  "C_steal_ns": 0.0,
+  "C_max": 4096,
+  "C_min": 32,
+  "lambda": 1.5,
+  "GPU_MIN_BATCH": 4096
+}
