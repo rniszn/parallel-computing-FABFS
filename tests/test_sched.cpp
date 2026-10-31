@@ -284,11 +284,16 @@ int main(int argc, char** argv) {
     int driver_version = 0;
     cudaDriverGetVersion(&driver_version);
 
+    Thresholds frozen_th = load_thresholds("config/thresholds.json");
+
     std::ofstream gate1_out("results/gate1.txt");
     gate1_out << "# Gate 1 Correctness & Benchmark Results\n";
     gate1_out << "# Git Commit: " << commit_hash << "\n";
     gate1_out << "# CUDA Driver Version: " << driver_version << "\n";
-    gate1_out << "# Thresholds Source: placeholder stub (src/model/decide.h: T_min=1, T_CV=1.0, T_par=0)\n";
+    gate1_out << "# Thresholds Source: " << frozen_th.status
+              << " (config/thresholds.json: commit=" << frozen_th.calibration_commit
+              << ", T_min=" << frozen_th.T_min << ", T_CV=" << frozen_th.T_CV
+              << ", T_par=" << frozen_th.T_par << ", alpha=" << frozen_th.alpha << ")\n";
     gate1_out << "# Evaluated on NVIDIA RTX 4050 Laptop GPU + OpenMP CPU\n";
     gate1_out << "graph,mode,threads,time_ms,correct\n";
 
@@ -354,7 +359,7 @@ int main(int argc, char** argv) {
         p.alpha = 0.50;
 
         auto t0 = std::chrono::high_resolution_clock::now();
-        auto got = bfs_adaptive(g, 0, p);
+        auto got = bfs_adaptive(g, 0, p, frozen_th);
         auto t1 = std::chrono::high_resolution_clock::now();
         double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
 

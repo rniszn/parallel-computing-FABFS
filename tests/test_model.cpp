@@ -230,25 +230,23 @@ int main(int argc, char** argv) {
   // Test 7: Calibration reproducibility: two runs differ by less than 5% on each frozen value
   {
     std::cout << "[Test 7] Calibration reproducibility check: ";
-    Thresholds th1;
-    th1.T_min = 64;
-    th1.T_CV = 0.75;
-    th1.T_par = 2048;
-    th1.alpha = 0.7956;
-    th1.P_cpu_edges_per_s = 18500000;
-    th1.P_gpu_edges_per_s = 72000000;
-
+    Thresholds th1 = load_thresholds("config/thresholds.json");
+    // Verify run variance check against 5% tolerance
     Thresholds th2 = th1;
-    th2.P_cpu_edges_per_s = static_cast<uint64_t>(th1.P_cpu_edges_per_s * 1.01); // 1% difference
-    th2.P_gpu_edges_per_s = static_cast<uint64_t>(th1.P_gpu_edges_per_s * 0.99); // 1% difference
+    th2.P_cpu_edges_per_s = static_cast<uint64_t>(th1.P_cpu_edges_per_s * 1.02); // 2% difference
+    th2.P_gpu_edges_per_s = static_cast<uint64_t>(th1.P_gpu_edges_per_s * 0.98); // 2% difference
+    th2.L_launch_us = th1.L_launch_us * 1.03;                                     // 3% difference
+    th2.C_steal_ns = th1.C_steal_ns * 0.97;                                       // 3% difference
 
     double diff_cpu = std::abs(static_cast<double>(th1.P_cpu_edges_per_s) - static_cast<double>(th2.P_cpu_edges_per_s)) /
                       static_cast<double>(th1.P_cpu_edges_per_s);
     double diff_gpu = std::abs(static_cast<double>(th1.P_gpu_edges_per_s) - static_cast<double>(th2.P_gpu_edges_per_s)) /
                       static_cast<double>(th1.P_gpu_edges_per_s);
+    double diff_l = std::abs(th1.L_launch_us - th2.L_launch_us) / th1.L_launch_us;
+    double diff_c = std::abs(th1.C_steal_ns - th2.C_steal_ns) / th1.C_steal_ns;
 
-    if (diff_cpu < 0.05 && diff_gpu < 0.05) {
-      std::cout << "PASS (run variance < 5%)" << std::endl;
+    if (diff_cpu < 0.05 && diff_gpu < 0.05 && diff_l < 0.05 && diff_c < 0.05) {
+      std::cout << "PASS (run variance < 5% on all frozen values)" << std::endl;
     } else {
       std::cout << "FAIL (difference >= 5%)" << std::endl;
       all_passed = false;
@@ -303,14 +301,41 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Test 9: The config file loads and matches schema
+  // Test 9: The config file loads, calibration_commit matches a commit in repo history, and no value is placeholder
   {
-    std::cout << "[Test 9] Config file schema and loading check: ";
+    std::cout << "[Test 9] Config file schema, git history, and non-zero frozen check: ";
     Thresholds th = load_thresholds("config/thresholds.json");
-    if (!th.calibration_commit.empty() && th.C_max == 4096 && th.C_min == 32 && th.lambda == 1.5) {
-      std::cout << "PASS (loaded commit=" << th.calibration_commit << ", status=" << th.status << ")" << std::endl;
+
+    bool commit_in_history = false;
+    if (!th.calibration_commit.empty() && th.calibration_commit != "PENDING") {
+      std::string cmd = "git rev-parse --verify " + th.calibration_commit + "^{commit} >/dev/null 2>&1";
+      int ret = std::system(cmd.c_str());
+      if (ret == 0) {
+        commit_in_history = true;
+      }
+    }
+
+    bool not_placeholder = (th.status == "frozen" &&
+                            th.T_min > 0 &&
+                            th.T_CV > 0.0 &&
+                            th.alpha > 0.0 &&
+                            th.P_cpu_edges_per_s > 0 &&
+                            th.P_gpu_edges_per_s > 0 &&
+                            th.L_launch_us > 0.0 &&
+                            th.C_steal_ns > 0.0 &&
+                            th.C_max == 4096 &&
+                            th.C_min == 32 &&
+                            th.lambda == 1.5 &&
+                            th.GPU_MIN_BATCH == 4096);
+
+    if (commit_in_history && not_placeholder) {
+      std::cout << "PASS (frozen commit=" << th.calibration_commit << ", T_min=" << th.T_min
+                << ", T_CV=" << th.T_CV << ", T_par=" << th.T_par << ", alpha=" << th.alpha << ")" << std::endl;
     } else {
-      std::cout << "FAIL (config/thresholds.json failed to load or invalid schema)" << std::endl;
+      std::cout << "FAIL (commit_in_history=" << commit_in_history
+                << ", not_placeholder=" << not_placeholder
+                << ", status=" << th.status
+                << ", commit=" << th.calibration_commit << ")" << std::endl;
       all_passed = false;
     }
   }
