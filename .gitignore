@@ -1,0 +1,10 @@
+build/
+bin/
+data/
+*.o
+tests/test_log
+tests/test_model
+tests/test_sched
+tests/test_deque
+tests/test_deque_tsan
+tests/test_sched_debug
