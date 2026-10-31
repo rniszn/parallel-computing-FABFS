@@ -130,6 +130,22 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  // NEGATIVE TEST: Deliberately remove one direction of an edge to break symmetry
+  if (g.n > 1 && g.row_offsets[1] > 0) {
+    vid_t u = 0;
+    vid_t v = g.col_indices[g.row_offsets[u]];
+    eid_t v_start = g.row_offsets[v];
+    eid_t v_end = g.row_offsets[v + 1];
+    auto it = std::lower_bound(g.col_indices.begin() + v_start, g.col_indices.begin() + v_end, u);
+    if (it != g.col_indices.begin() + v_end && *it == u) {
+      g.col_indices.erase(it);
+      g.m--;
+      for (vid_t i = v + 1; i <= g.n; ++i) {
+        g.row_offsets[i]--;
+      }
+    }
+  }
+
   std::cout << "Validating graph " << graph_name << "...\n";
   std::string val = validate_graph(g);
   if (val != "ok") {
