@@ -10,6 +10,8 @@
 
 #include "cpu/bfs_omp.h"
 #include "gpu/bfs_cuda.h"
+#include "model/decide.h"
+#include "model/stats.h"
 #include "sched/deque.h"
 #include "sched/gpu_proxy.h"
 
@@ -26,58 +28,7 @@ void set_sched_context(const Graph* g, const GpuGraph* gg, double cv) {
 }
 
 LevelStats compute_level_stats(const Graph& g, const BfsState& st, size_t fbegin, size_t fend, uint32_t level) {
-  LevelStats stats;
-  stats.level = level;
-  if (fbegin >= fend) {
-    return stats;
-  }
-
-  size_t count = fend - fbegin;
-  stats.frontier_size = count;
-
-  uint64_t total_deg = 0;
-  uint32_t max_d = 0;
-
-  for (size_t i = fbegin; i < fend; ++i) {
-    vid_t u = st.frontier[i];
-    uint32_t d = static_cast<uint32_t>(g.row_offsets[u + 1] - g.row_offsets[u]);
-    total_deg += d;
-    if (d > max_d) max_d = d;
-  }
-
-  stats.edge_work = total_deg;
-  stats.dmax = max_d;
-  stats.mu = static_cast<double>(total_deg) / static_cast<double>(count);
-
-  if (count <= 1 || stats.mu == 0.0) {
-    stats.cv = 0.0;
-  } else {
-    double sum_sq_diff = 0.0;
-    for (size_t i = fbegin; i < fend; ++i) {
-      vid_t u = st.frontier[i];
-      double d = static_cast<double>(g.row_offsets[u + 1] - g.row_offsets[u]);
-      double diff = d - stats.mu;
-      sum_sq_diff += diff * diff;
-    }
-    double variance = sum_sq_diff / static_cast<double>(count);
-    double sigma = std::sqrt(variance);
-    stats.cv = sigma / stats.mu;
-  }
-
-  return stats;
-}
-
-uint32_t clamp_pow2(double val, uint32_t c_min, uint32_t c_max) {
-  if (val <= static_cast<double>(c_min)) return c_min;
-  if (val >= static_cast<double>(c_max)) return c_max;
-  uint32_t v = static_cast<uint32_t>(val);
-  uint32_t p = 1;
-  while ((p << 1) <= v) {
-    p <<= 1;
-  }
-  if (p < c_min) p = c_min;
-  if (p > c_max) p = c_max;
-  return p;
+  return compute_frontier_stats(g, st.frontier, fbegin, fend, level, 4);
 }
 
 void run_level(Mode mode, BfsState& st, size_t fbegin, size_t fend, const Params& p, LevelLog& log) {
