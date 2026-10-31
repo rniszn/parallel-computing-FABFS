@@ -4,19 +4,19 @@ set -euo pipefail
 # Create data directory if missing
 mkdir -p data
 
-FILES=(
-  "roadNet-CA.txt.gz"
-  "web-Google.txt.gz"
-  "com-lj.ungraph.txt.gz"
-  "com-orkut.ungraph.txt.gz"
-  "roadNet-PA.txt.gz"
-  "com-amazon.ungraph.txt.gz"
-  "com-dblp.ungraph.txt.gz"
+# Pair: URL and local gz filename
+URLS=(
+  "https://snap.stanford.edu/data/roadNet-CA.txt.gz"
+  "https://snap.stanford.edu/data/web-Google.txt.gz"
+  "https://snap.stanford.edu/data/bigdata/communities/com-lj.ungraph.txt.gz"
+  "https://snap.stanford.edu/data/bigdata/communities/com-orkut.ungraph.txt.gz"
+  "https://snap.stanford.edu/data/roadNet-PA.txt.gz"
+  "https://snap.stanford.edu/data/bigdata/communities/com-amazon.ungraph.txt.gz"
+  "https://snap.stanford.edu/data/bigdata/communities/com-dblp.ungraph.txt.gz"
 )
 
-BASE_URL="https://snap.stanford.edu/data"
-
-for gz_file in "${FILES[@]}"; do
+for url in "${URLS[@]}"; do
+  gz_file=$(basename "$url")
   txt_file="${gz_file%.gz}"
   
   if [[ -f "data/$txt_file" ]]; then
@@ -24,9 +24,9 @@ for gz_file in "${FILES[@]}"; do
     continue
   fi
 
-  echo "[fetch] Downloading $BASE_URL/$gz_file ..."
-  if ! curl --fail --retry 3 --retry-delay 2 -L -o "data/$gz_file" "$BASE_URL/$gz_file"; then
-    echo "ERROR: Failed to download $gz_file from $BASE_URL" >&2
+  echo "[fetch] Downloading $url ..."
+  if ! curl --fail --retry 3 --retry-delay 2 -L -o "data/$gz_file" "$url"; then
+    echo "ERROR: Failed to download $gz_file from $url" >&2
     exit 1
   fi
 

@@ -110,43 +110,38 @@ class FastEdgeReader {
 Graph build_csr_from_snap(const std::string& filepath, GraphBuildStats& stats) {
   FastEdgeReader reader(filepath);
 
-  std::unordered_map<uint64_t, vid_t> id_to_dense;
-  std::vector<uint64_t> dense_to_id;
-  std::vector<eid_t> deg;
+  std::unordered_map<uint64_t, eid_t> deg_map;
+  deg_map.reserve(4 * 1024 * 1024);
 
   stats.self_loops_removed = 0;
   stats.duplicates_removed = 0;
   stats.renumbered = 0;
 
-  // --- PASS 1: Map vertex IDs and count degrees ---
+  // --- PASS 1: Count degrees per unique raw ID ---
   uint64_t u_raw = 0, v_raw = 0;
   while (reader.next_edge(u_raw, v_raw)) {
     if (u_raw == v_raw) {
       stats.self_loops_removed++;
       continue;
     }
-
-    auto get_dense = [&](uint64_t raw) -> vid_t {
-      auto it = id_to_dense.find(raw);
-      if (it != id_to_dense.end()) {
-        return it->second;
-      }
-      vid_t new_id = static_cast<vid_t>(dense_to_id.size());
-      id_to_dense[raw] = new_id;
-      dense_to_id.push_back(raw);
-      deg.push_back(0);
-      return new_id;
-    };
-
-    vid_t u = get_dense(u_raw);
-    vid_t v = get_dense(v_raw);
-    deg[u]++;
-    deg[v]++;
+    deg_map[u_raw]++;
+    deg_map[v_raw]++;
   }
 
-  vid_t n = static_cast<vid_t>(dense_to_id.size());
+  vid_t n = static_cast<vid_t>(deg_map.size());
+  std::vector<uint64_t> unique_ids;
+  unique_ids.reserve(n);
+  for (const auto& kv : deg_map) {
+    unique_ids.push_back(kv.first);
+  }
+  std::sort(unique_ids.begin(), unique_ids.end());
+
+  std::unordered_map<uint64_t, vid_t> id_to_dense;
+  id_to_dense.reserve(n);
   for (vid_t i = 0; i < n; ++i) {
-    if (dense_to_id[i] != static_cast<uint64_t>(i)) {
+    uint64_t raw_id = unique_ids[i];
+    id_to_dense[raw_id] = i;
+    if (raw_id != static_cast<uint64_t>(i)) {
       stats.renumbered++;
     }
   }
@@ -156,10 +151,16 @@ Graph build_csr_from_snap(const std::string& filepath, GraphBuildStats& stats) {
   g.n = n;
   g.row_offsets.assign(n + 1, 0);
   for (vid_t i = 0; i < n; ++i) {
-    g.row_offsets[i + 1] = g.row_offsets[i] + deg[i];
+    uint64_t raw_id = unique_ids[i];
+    g.row_offsets[i + 1] = g.row_offsets[i] + deg_map[raw_id];
   }
   eid_t total_tentative = g.row_offsets[n];
   g.col_indices.resize(total_tentative);
+
+  // Free degrees map and unique_ids vector
+  deg_map.clear();
+  unique_ids.clear();
+  unique_ids.shrink_to_fit();
 
   // Write cursors for Pass 2
   std::vector<eid_t> cursor = g.row_offsets;
@@ -178,8 +179,8 @@ Graph build_csr_from_snap(const std::string& filepath, GraphBuildStats& stats) {
 
   // Release ID mapping memory before sorting/compaction
   id_to_dense.clear();
-  dense_to_id.clear();
-  deg.clear();
+  cursor.clear();
+  cursor.shrink_to_fit();
 
   // --- In-place sort and deduplication per vertex ---
   std::vector<eid_t> new_offsets(g.n + 1, 0);
