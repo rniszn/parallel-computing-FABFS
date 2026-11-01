@@ -1,0 +1,5 @@
+run_id,graph,policy,round,level,frontier_size,edge_work,mu,cv,dmax,mode_chosen,chunk_size,time_us,steals_attempted,steals_succeeded,gpu_batches,correct,git_commit,driver_version,threads,alpha,gpu_min_batch,num_chunks,gpu_batch_vertices,t_cpu_us,t_gpu_us,t_merge_us,gpu_idle_us
+demo_rmat10_run1,rmat10_seed1,Adaptive,0,0,1,195,195.000000,0.000000,195,SEQ,0,13.81,0,0,0,true,e11fd1c3d2e77a209dbcf16ede0583a5ba8840b2,13010,4,0.1526,4096,0,0,13.51,0.00,0.00,0.00
+demo_rmat10_run1,rmat10_seed1,Adaptive,0,1,195,11453,58.733333,0.572307,172,SEQ,0,158.87,0,0,0,true,e11fd1c3d2e77a209dbcf16ede0583a5ba8840b2,13010,4,0.1526,4096,0,0,158.78,0.00,0.00,0.00
+demo_rmat10_run1,rmat10_seed1,Adaptive,0,2,795,18054,22.709434,0.704182,113,SEQ,0,217.76,0,0,0,true,e11fd1c3d2e77a209dbcf16ede0583a5ba8840b2,13010,4,0.1526,4096,0,0,217.67,0.00,0.00,0.00
+demo_rmat10_run1,rmat10_seed1,Adaptive,0,3,32,122,3.812500,0.573302,10,SEQ,0,2.90,0,0,0,true,e11fd1c3d2e77a209dbcf16ede0583a5ba8840b2,13010,4,0.1526,4096,0,0,2.81,0.00,0.00,0.00

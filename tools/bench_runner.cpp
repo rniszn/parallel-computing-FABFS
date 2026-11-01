@@ -22,6 +22,8 @@ int main(int argc, char** argv) {
       config.runs_jsonl_path = arg.substr(7);
     } else if (arg.find("--kill-after-rows=") == 0) {
       config.kill_after_rows = std::stoi(arg.substr(18));
+    } else if (arg.find("--expected-count=") == 0) {
+      config.expected_manifest_count = std::stoul(arg.substr(17));
     }
   }
 

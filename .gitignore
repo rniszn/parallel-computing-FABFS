@@ -13,5 +13,6 @@ tests/fixtures/bad_manifest.json
 tests/fixtures/dry_run_test/
 tests/fixtures/test_env/
 tests/fixtures/test_resume/
+results/small_test_*
 __pycache__/
 *.pyc
