@@ -1,0 +1,2882 @@
+[
+  {
+    "run_id": "run_049",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 4
+  },
+  {
+    "run_id": "run_384",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 9
+  },
+  {
+    "run_id": "run_062",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 2
+  },
+  {
+    "run_id": "run_239",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 14
+  },
+  {
+    "run_id": "run_468",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 3
+  },
+  {
+    "run_id": "run_126",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 6
+  },
+  {
+    "run_id": "run_108",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 3
+  },
+  {
+    "run_id": "run_149",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 14
+  },
+  {
+    "run_id": "run_005",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 5
+  },
+  {
+    "run_id": "run_457",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 7
+  },
+  {
+    "run_id": "run_019",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 4
+  },
+  {
+    "run_id": "run_284",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 14
+  },
+  {
+    "run_id": "run_099",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 9
+  },
+  {
+    "run_id": "run_342",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 12
+  },
+  {
+    "run_id": "run_051",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 6
+  },
+  {
+    "run_id": "run_334",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 4
+  },
+  {
+    "run_id": "run_397",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 7
+  },
+  {
+    "run_id": "run_144",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 9
+  },
+  {
+    "run_id": "run_339",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 9
+  },
+  {
+    "run_id": "run_117",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 12
+  },
+  {
+    "run_id": "run_050",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 5
+  },
+  {
+    "run_id": "run_055",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 10
+  },
+  {
+    "run_id": "run_018",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 3
+  },
+  {
+    "run_id": "run_355",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 10
+  },
+  {
+    "run_id": "run_299",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 14
+  },
+  {
+    "run_id": "run_020",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 5
+  },
+  {
+    "run_id": "run_343",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 13
+  },
+  {
+    "run_id": "run_447",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 12
+  },
+  {
+    "run_id": "run_142",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 7
+  },
+  {
+    "run_id": "run_007",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 7
+  },
+  {
+    "run_id": "run_431",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 11
+  },
+  {
+    "run_id": "run_347",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 2
+  },
+  {
+    "run_id": "run_257",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 2
+  },
+  {
+    "run_id": "run_221",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 11
+  },
+  {
+    "run_id": "run_205",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 10
+  },
+  {
+    "run_id": "run_427",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 7
+  },
+  {
+    "run_id": "run_072",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 12
+  },
+  {
+    "run_id": "run_226",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 1
+  },
+  {
+    "run_id": "run_177",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 12
+  },
+  {
+    "run_id": "run_399",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 9
+  },
+  {
+    "run_id": "run_377",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 2
+  },
+  {
+    "run_id": "run_312",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 12
+  },
+  {
+    "run_id": "run_383",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 8
+  },
+  {
+    "run_id": "run_196",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 1
+  },
+  {
+    "run_id": "run_014",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 14
+  },
+  {
+    "run_id": "run_052",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 7
+  },
+  {
+    "run_id": "run_371",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 11
+  },
+  {
+    "run_id": "run_253",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 13
+  },
+  {
+    "run_id": "run_011",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 11
+  },
+  {
+    "run_id": "run_460",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 10
+  },
+  {
+    "run_id": "run_216",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 6
+  },
+  {
+    "run_id": "run_022",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 7
+  },
+  {
+    "run_id": "run_081",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 6
+  },
+  {
+    "run_id": "run_392",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 2
+  },
+  {
+    "run_id": "run_023",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 8
+  },
+  {
+    "run_id": "run_363",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 3
+  },
+  {
+    "run_id": "run_218",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 8
+  },
+  {
+    "run_id": "run_047",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 2
+  },
+  {
+    "run_id": "run_346",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 1
+  },
+  {
+    "run_id": "run_417",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 12
+  },
+  {
+    "run_id": "run_243",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 3
+  },
+  {
+    "run_id": "run_096",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 6
+  },
+  {
+    "run_id": "run_075",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 15
+  },
+  {
+    "run_id": "run_167",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 2
+  },
+  {
+    "run_id": "run_215",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 5
+  },
+  {
+    "run_id": "run_356",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 11
+  },
+  {
+    "run_id": "run_083",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 8
+  },
+  {
+    "run_id": "run_301",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 1
+  },
+  {
+    "run_id": "run_422",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 2
+  },
+  {
+    "run_id": "run_146",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 11
+  },
+  {
+    "run_id": "run_208",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 13
+  },
+  {
+    "run_id": "run_102",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 12
+  },
+  {
+    "run_id": "run_246",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 6
+  },
+  {
+    "run_id": "run_438",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 3
+  },
+  {
+    "run_id": "run_332",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 2
+  },
+  {
+    "run_id": "run_270",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 15
+  },
+  {
+    "run_id": "run_012",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 12
+  },
+  {
+    "run_id": "run_450",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 15
+  },
+  {
+    "run_id": "run_401",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 11
+  },
+  {
+    "run_id": "run_304",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 4
+  },
+  {
+    "run_id": "run_359",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 14
+  },
+  {
+    "run_id": "run_364",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 4
+  },
+  {
+    "run_id": "run_165",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 15
+  },
+  {
+    "run_id": "run_329",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 14
+  },
+  {
+    "run_id": "run_439",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 4
+  },
+  {
+    "run_id": "run_247",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 7
+  },
+  {
+    "run_id": "run_231",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 6
+  },
+  {
+    "run_id": "run_132",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 12
+  },
+  {
+    "run_id": "run_258",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 3
+  },
+  {
+    "run_id": "run_166",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 1
+  },
+  {
+    "run_id": "run_128",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 8
+  },
+  {
+    "run_id": "run_420",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 15
+  },
+  {
+    "run_id": "run_241",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 1
+  },
+  {
+    "run_id": "run_192",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 12
+  },
+  {
+    "run_id": "run_230",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 5
+  },
+  {
+    "run_id": "run_026",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 11
+  },
+  {
+    "run_id": "run_375",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 15
+  },
+  {
+    "run_id": "run_326",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 11
+  },
+  {
+    "run_id": "run_295",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 10
+  },
+  {
+    "run_id": "run_151",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 1
+  },
+  {
+    "run_id": "run_125",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 5
+  },
+  {
+    "run_id": "run_289",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 4
+  },
+  {
+    "run_id": "run_069",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 9
+  },
+  {
+    "run_id": "run_080",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 5
+  },
+  {
+    "run_id": "run_174",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 9
+  },
+  {
+    "run_id": "run_071",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 11
+  },
+  {
+    "run_id": "run_201",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 6
+  },
+  {
+    "run_id": "run_131",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 11
+  },
+  {
+    "run_id": "run_264",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 9
+  },
+  {
+    "run_id": "run_103",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 13
+  },
+  {
+    "run_id": "run_406",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 1
+  },
+  {
+    "run_id": "run_357",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 12
+  },
+  {
+    "run_id": "run_445",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 10
+  },
+  {
+    "run_id": "run_089",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 14
+  },
+  {
+    "run_id": "run_157",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 7
+  },
+  {
+    "run_id": "run_235",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 10
+  },
+  {
+    "run_id": "run_283",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 13
+  },
+  {
+    "run_id": "run_374",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 14
+  },
+  {
+    "run_id": "run_045",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 15
+  },
+  {
+    "run_id": "run_405",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 15
+  },
+  {
+    "run_id": "run_082",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 7
+  },
+  {
+    "run_id": "run_387",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 12
+  },
+  {
+    "run_id": "run_242",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 2
+  },
+  {
+    "run_id": "run_349",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 4
+  },
+  {
+    "run_id": "run_015",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 15
+  },
+  {
+    "run_id": "run_331",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 1
+  },
+  {
+    "run_id": "run_001",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 1
+  },
+  {
+    "run_id": "run_033",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 3
+  },
+  {
+    "run_id": "run_224",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 14
+  },
+  {
+    "run_id": "run_385",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 10
+  },
+  {
+    "run_id": "run_143",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 8
+  },
+  {
+    "run_id": "run_254",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 14
+  },
+  {
+    "run_id": "run_466",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 1
+  },
+  {
+    "run_id": "run_434",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 14
+  },
+  {
+    "run_id": "run_178",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 13
+  },
+  {
+    "run_id": "run_366",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 6
+  },
+  {
+    "run_id": "run_193",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 13
+  },
+  {
+    "run_id": "run_391",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 1
+  },
+  {
+    "run_id": "run_416",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 11
+  },
+  {
+    "run_id": "run_315",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 15
+  },
+  {
+    "run_id": "run_009",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 9
+  },
+  {
+    "run_id": "run_285",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 15
+  },
+  {
+    "run_id": "run_464",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 14
+  },
+  {
+    "run_id": "run_435",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 15
+  },
+  {
+    "run_id": "run_088",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 13
+  },
+  {
+    "run_id": "run_446",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 11
+  },
+  {
+    "run_id": "run_154",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 4
+  },
+  {
+    "run_id": "run_440",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 5
+  },
+  {
+    "run_id": "run_008",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 8
+  },
+  {
+    "run_id": "run_322",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 7
+  },
+  {
+    "run_id": "run_182",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 2
+  },
+  {
+    "run_id": "run_092",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 2
+  },
+  {
+    "run_id": "run_404",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 14
+  },
+  {
+    "run_id": "run_057",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 12
+  },
+  {
+    "run_id": "run_313",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 13
+  },
+  {
+    "run_id": "run_060",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 15
+  },
+  {
+    "run_id": "run_190",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 10
+  },
+  {
+    "run_id": "run_028",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 13
+  },
+  {
+    "run_id": "run_044",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 14
+  },
+  {
+    "run_id": "run_158",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 8
+  },
+  {
+    "run_id": "run_209",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 14
+  },
+  {
+    "run_id": "run_467",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 2
+  },
+  {
+    "run_id": "run_324",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 9
+  },
+  {
+    "run_id": "run_454",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 4
+  },
+  {
+    "run_id": "run_030",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 15
+  },
+  {
+    "run_id": "run_379",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 4
+  },
+  {
+    "run_id": "run_098",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 8
+  },
+  {
+    "run_id": "run_227",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 2
+  },
+  {
+    "run_id": "run_153",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 3
+  },
+  {
+    "run_id": "run_234",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 9
+  },
+  {
+    "run_id": "run_480",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 15
+  },
+  {
+    "run_id": "run_320",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 5
+  },
+  {
+    "run_id": "run_159",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 9
+  },
+  {
+    "run_id": "run_458",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 8
+  },
+  {
+    "run_id": "run_378",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 3
+  },
+  {
+    "run_id": "run_411",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 6
+  },
+  {
+    "run_id": "run_400",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 10
+  },
+  {
+    "run_id": "run_093",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 3
+  },
+  {
+    "run_id": "run_290",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 5
+  },
+  {
+    "run_id": "run_261",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 6
+  },
+  {
+    "run_id": "run_390",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 15
+  },
+  {
+    "run_id": "run_410",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 5
+  },
+  {
+    "run_id": "run_282",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 12
+  },
+  {
+    "run_id": "run_025",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 10
+  },
+  {
+    "run_id": "run_248",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 8
+  },
+  {
+    "run_id": "run_362",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 2
+  },
+  {
+    "run_id": "run_462",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 12
+  },
+  {
+    "run_id": "run_150",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 15
+  },
+  {
+    "run_id": "run_185",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 5
+  },
+  {
+    "run_id": "run_274",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 4
+  },
+  {
+    "run_id": "run_054",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 9
+  },
+  {
+    "run_id": "run_423",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 3
+  },
+  {
+    "run_id": "run_436",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 1
+  },
+  {
+    "run_id": "run_263",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 8
+  },
+  {
+    "run_id": "run_027",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 12
+  },
+  {
+    "run_id": "run_119",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 14
+  },
+  {
+    "run_id": "run_006",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 6
+  },
+  {
+    "run_id": "run_233",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 8
+  },
+  {
+    "run_id": "run_298",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 13
+  },
+  {
+    "run_id": "run_370",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 10
+  },
+  {
+    "run_id": "run_453",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 3
+  },
+  {
+    "run_id": "run_113",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 8
+  },
+  {
+    "run_id": "run_276",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 6
+  },
+  {
+    "run_id": "run_204",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 9
+  },
+  {
+    "run_id": "run_475",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 10
+  },
+  {
+    "run_id": "run_104",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 14
+  },
+  {
+    "run_id": "run_402",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 12
+  },
+  {
+    "run_id": "run_073",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 13
+  },
+  {
+    "run_id": "run_352",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 7
+  },
+  {
+    "run_id": "run_293",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 8
+  },
+  {
+    "run_id": "run_336",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 6
+  },
+  {
+    "run_id": "run_430",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 10
+  },
+  {
+    "run_id": "run_459",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 9
+  },
+  {
+    "run_id": "run_296",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 11
+  },
+  {
+    "run_id": "run_056",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 11
+  },
+  {
+    "run_id": "run_237",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 12
+  },
+  {
+    "run_id": "run_300",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 15
+  },
+  {
+    "run_id": "run_421",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 1
+  },
+  {
+    "run_id": "run_058",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 13
+  },
+  {
+    "run_id": "run_308",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 8
+  },
+  {
+    "run_id": "run_120",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 15
+  },
+  {
+    "run_id": "run_238",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 13
+  },
+  {
+    "run_id": "run_172",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 7
+  },
+  {
+    "run_id": "run_311",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 11
+  },
+  {
+    "run_id": "run_079",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 4
+  },
+  {
+    "run_id": "run_134",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 14
+  },
+  {
+    "run_id": "run_136",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 1
+  },
+  {
+    "run_id": "run_183",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 3
+  },
+  {
+    "run_id": "run_189",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 9
+  },
+  {
+    "run_id": "run_353",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 8
+  },
+  {
+    "run_id": "run_229",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 4
+  },
+  {
+    "run_id": "run_428",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 8
+  },
+  {
+    "run_id": "run_213",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 3
+  },
+  {
+    "run_id": "run_477",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 12
+  },
+  {
+    "run_id": "run_139",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 4
+  },
+  {
+    "run_id": "run_138",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 3
+  },
+  {
+    "run_id": "run_292",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 7
+  },
+  {
+    "run_id": "run_097",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 7
+  },
+  {
+    "run_id": "run_266",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 11
+  },
+  {
+    "run_id": "run_319",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 4
+  },
+  {
+    "run_id": "run_469",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 4
+  },
+  {
+    "run_id": "run_307",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 7
+  },
+  {
+    "run_id": "run_085",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 10
+  },
+  {
+    "run_id": "run_280",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 10
+  },
+  {
+    "run_id": "run_478",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 13
+  },
+  {
+    "run_id": "run_116",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 11
+  },
+  {
+    "run_id": "run_240",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 15
+  },
+  {
+    "run_id": "run_145",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 10
+  },
+  {
+    "run_id": "run_187",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 7
+  },
+  {
+    "run_id": "run_451",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 1
+  },
+  {
+    "run_id": "run_040",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 10
+  },
+  {
+    "run_id": "run_084",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 9
+  },
+  {
+    "run_id": "run_414",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 9
+  },
+  {
+    "run_id": "run_161",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 11
+  },
+  {
+    "run_id": "run_437",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 2
+  },
+  {
+    "run_id": "run_179",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 14
+  },
+  {
+    "run_id": "run_448",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 13
+  },
+  {
+    "run_id": "run_396",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 6
+  },
+  {
+    "run_id": "run_279",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 9
+  },
+  {
+    "run_id": "run_455",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 5
+  },
+  {
+    "run_id": "run_267",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 12
+  },
+  {
+    "run_id": "run_275",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 5
+  },
+  {
+    "run_id": "run_087",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 12
+  },
+  {
+    "run_id": "run_101",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 11
+  },
+  {
+    "run_id": "run_199",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 4
+  },
+  {
+    "run_id": "run_354",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 9
+  },
+  {
+    "run_id": "run_442",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 7
+  },
+  {
+    "run_id": "run_170",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 5
+  },
+  {
+    "run_id": "run_053",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 8
+  },
+  {
+    "run_id": "run_130",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 10
+  },
+  {
+    "run_id": "run_316",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 1
+  },
+  {
+    "run_id": "run_472",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 7
+  },
+  {
+    "run_id": "run_303",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 3
+  },
+  {
+    "run_id": "run_268",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 13
+  },
+  {
+    "run_id": "run_135",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 15
+  },
+  {
+    "run_id": "run_002",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 2
+  },
+  {
+    "run_id": "run_302",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 2
+  },
+  {
+    "run_id": "run_361",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 1
+  },
+  {
+    "run_id": "run_094",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 4
+  },
+  {
+    "run_id": "run_338",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 8
+  },
+  {
+    "run_id": "run_433",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 13
+  },
+  {
+    "run_id": "run_129",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 9
+  },
+  {
+    "run_id": "run_351",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 6
+  },
+  {
+    "run_id": "run_152",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 2
+  },
+  {
+    "run_id": "run_249",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 9
+  },
+  {
+    "run_id": "run_388",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 13
+  },
+  {
+    "run_id": "run_456",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 6
+  },
+  {
+    "run_id": "run_260",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 5
+  },
+  {
+    "run_id": "run_034",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 4
+  },
+  {
+    "run_id": "run_344",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 14
+  },
+  {
+    "run_id": "run_317",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 2
+  },
+  {
+    "run_id": "run_408",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 3
+  },
+  {
+    "run_id": "run_425",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 5
+  },
+  {
+    "run_id": "run_206",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 11
+  },
+  {
+    "run_id": "run_070",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 10
+  },
+  {
+    "run_id": "run_041",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 11
+  },
+  {
+    "run_id": "run_244",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 4
+  },
+  {
+    "run_id": "run_194",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 14
+  },
+  {
+    "run_id": "run_037",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 7
+  },
+  {
+    "run_id": "run_121",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 1
+  },
+  {
+    "run_id": "run_395",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 5
+  },
+  {
+    "run_id": "run_003",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 3
+  },
+  {
+    "run_id": "run_310",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 10
+  },
+  {
+    "run_id": "run_465",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 15
+  },
+  {
+    "run_id": "run_256",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 1
+  },
+  {
+    "run_id": "run_068",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 8
+  },
+  {
+    "run_id": "run_162",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 12
+  },
+  {
+    "run_id": "run_306",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 6
+  },
+  {
+    "run_id": "run_252",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 12
+  },
+  {
+    "run_id": "run_348",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 3
+  },
+  {
+    "run_id": "run_328",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 13
+  },
+  {
+    "run_id": "run_114",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 9
+  },
+  {
+    "run_id": "run_269",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 14
+  },
+  {
+    "run_id": "run_441",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 6
+  },
+  {
+    "run_id": "run_369",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 9
+  },
+  {
+    "run_id": "run_021",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 6
+  },
+  {
+    "run_id": "run_013",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 13
+  },
+  {
+    "run_id": "run_259",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 4
+  },
+  {
+    "run_id": "run_255",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 15
+  },
+  {
+    "run_id": "run_123",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 3
+  },
+  {
+    "run_id": "run_424",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 4
+  },
+  {
+    "run_id": "run_389",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 14
+  },
+  {
+    "run_id": "run_473",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 8
+  },
+  {
+    "run_id": "run_043",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 13
+  },
+  {
+    "run_id": "run_207",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 12
+  },
+  {
+    "run_id": "run_287",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 2
+  },
+  {
+    "run_id": "run_470",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 5
+  },
+  {
+    "run_id": "run_314",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 14
+  },
+  {
+    "run_id": "run_220",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 10
+  },
+  {
+    "run_id": "run_024",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 9
+  },
+  {
+    "run_id": "run_419",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 14
+  },
+  {
+    "run_id": "run_305",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 5
+  },
+  {
+    "run_id": "run_112",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 7
+  },
+  {
+    "run_id": "run_198",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 3
+  },
+  {
+    "run_id": "run_078",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 3
+  },
+  {
+    "run_id": "run_100",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 10
+  },
+  {
+    "run_id": "run_066",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 6
+  },
+  {
+    "run_id": "run_214",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 4
+  },
+  {
+    "run_id": "run_029",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 14
+  },
+  {
+    "run_id": "run_147",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 12
+  },
+  {
+    "run_id": "run_091",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 1
+  },
+  {
+    "run_id": "run_035",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 5
+  },
+  {
+    "run_id": "run_318",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 3
+  },
+  {
+    "run_id": "run_141",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 6
+  },
+  {
+    "run_id": "run_036",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 6
+  },
+  {
+    "run_id": "run_180",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 15
+  },
+  {
+    "run_id": "run_381",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 6
+  },
+  {
+    "run_id": "run_133",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 13
+  },
+  {
+    "run_id": "run_337",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 7
+  },
+  {
+    "run_id": "run_063",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 3
+  },
+  {
+    "run_id": "run_228",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 3
+  },
+  {
+    "run_id": "run_065",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 5
+  },
+  {
+    "run_id": "run_393",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 3
+  },
+  {
+    "run_id": "run_273",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 3
+  },
+  {
+    "run_id": "run_476",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 11
+  },
+  {
+    "run_id": "run_095",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 5
+  },
+  {
+    "run_id": "run_186",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 6
+  },
+  {
+    "run_id": "run_474",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 9
+  },
+  {
+    "run_id": "run_272",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 2
+  },
+  {
+    "run_id": "run_271",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 1
+  },
+  {
+    "run_id": "run_277",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 7
+  },
+  {
+    "run_id": "run_232",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 7
+  },
+  {
+    "run_id": "run_286",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 1
+  },
+  {
+    "run_id": "run_111",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 6
+  },
+  {
+    "run_id": "run_090",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 15
+  },
+  {
+    "run_id": "run_195",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 15
+  },
+  {
+    "run_id": "run_281",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 11
+  },
+  {
+    "run_id": "run_429",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 9
+  },
+  {
+    "run_id": "run_127",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 7
+  },
+  {
+    "run_id": "run_251",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 11
+  },
+  {
+    "run_id": "run_181",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 1
+  },
+  {
+    "run_id": "run_443",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 8
+  },
+  {
+    "run_id": "run_330",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 15
+  },
+  {
+    "run_id": "run_327",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 12
+  },
+  {
+    "run_id": "run_124",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 4
+  },
+  {
+    "run_id": "run_403",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 13
+  },
+  {
+    "run_id": "run_382",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 7
+  },
+  {
+    "run_id": "run_086",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 11
+  },
+  {
+    "run_id": "run_202",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 7
+  },
+  {
+    "run_id": "run_061",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 1
+  },
+  {
+    "run_id": "run_074",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 14
+  },
+  {
+    "run_id": "run_398",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 8
+  },
+  {
+    "run_id": "run_222",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 12
+  },
+  {
+    "run_id": "run_219",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 9
+  },
+  {
+    "run_id": "run_076",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 1
+  },
+  {
+    "run_id": "run_200",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 5
+  },
+  {
+    "run_id": "run_262",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 7
+  },
+  {
+    "run_id": "run_368",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 8
+  },
+  {
+    "run_id": "run_297",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 12
+  },
+  {
+    "run_id": "run_148",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 13
+  },
+  {
+    "run_id": "run_004",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 4
+  },
+  {
+    "run_id": "run_160",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 10
+  },
+  {
+    "run_id": "run_038",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 8
+  },
+  {
+    "run_id": "run_360",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 15
+  },
+  {
+    "run_id": "run_137",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 2
+  },
+  {
+    "run_id": "run_140",
+    "policy": "Pure-Static",
+    "graph": "com-lj",
+    "round": 5
+  },
+  {
+    "run_id": "run_173",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 8
+  },
+  {
+    "run_id": "run_380",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 5
+  },
+  {
+    "run_id": "run_106",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 1
+  },
+  {
+    "run_id": "run_163",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 13
+  },
+  {
+    "run_id": "run_345",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 15
+  },
+  {
+    "run_id": "run_105",
+    "policy": "Pure-Dynamic",
+    "graph": "web-Google",
+    "round": 15
+  },
+  {
+    "run_id": "run_394",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.55",
+    "round": 4
+  },
+  {
+    "run_id": "run_176",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 11
+  },
+  {
+    "run_id": "run_449",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 14
+  },
+  {
+    "run_id": "run_225",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 15
+  },
+  {
+    "run_id": "run_250",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 10
+  },
+  {
+    "run_id": "run_236",
+    "policy": "Oracle-Replay",
+    "graph": "com-orkut",
+    "round": 11
+  },
+  {
+    "run_id": "run_358",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 13
+  },
+  {
+    "run_id": "run_212",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 2
+  },
+  {
+    "run_id": "run_278",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.25",
+    "round": 8
+  },
+  {
+    "run_id": "run_210",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 15
+  },
+  {
+    "run_id": "run_197",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 2
+  },
+  {
+    "run_id": "run_426",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 6
+  },
+  {
+    "run_id": "run_077",
+    "policy": "Pure-Static",
+    "graph": "web-Google",
+    "round": 2
+  },
+  {
+    "run_id": "run_350",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.45",
+    "round": 5
+  },
+  {
+    "run_id": "run_471",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 6
+  },
+  {
+    "run_id": "run_110",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 5
+  },
+  {
+    "run_id": "run_155",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 5
+  },
+  {
+    "run_id": "run_046",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 1
+  },
+  {
+    "run_id": "run_335",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 5
+  },
+  {
+    "run_id": "run_115",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 10
+  },
+  {
+    "run_id": "run_376",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 1
+  },
+  {
+    "run_id": "run_294",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 9
+  },
+  {
+    "run_id": "run_340",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 10
+  },
+  {
+    "run_id": "run_059",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 14
+  },
+  {
+    "run_id": "run_413",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 8
+  },
+  {
+    "run_id": "run_188",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 8
+  },
+  {
+    "run_id": "run_365",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 5
+  },
+  {
+    "run_id": "run_265",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.25",
+    "round": 10
+  },
+  {
+    "run_id": "run_122",
+    "policy": "Adaptive",
+    "graph": "com-lj",
+    "round": 2
+  },
+  {
+    "run_id": "run_412",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 7
+  },
+  {
+    "run_id": "run_217",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 7
+  },
+  {
+    "run_id": "run_452",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 2
+  },
+  {
+    "run_id": "run_432",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.65",
+    "round": 12
+  },
+  {
+    "run_id": "run_169",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 4
+  },
+  {
+    "run_id": "run_418",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 13
+  },
+  {
+    "run_id": "run_109",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 4
+  },
+  {
+    "run_id": "run_175",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 10
+  },
+  {
+    "run_id": "run_463",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 13
+  },
+  {
+    "run_id": "run_291",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 6
+  },
+  {
+    "run_id": "run_168",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 3
+  },
+  {
+    "run_id": "run_461",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.65",
+    "round": 11
+  },
+  {
+    "run_id": "run_245",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.25",
+    "round": 5
+  },
+  {
+    "run_id": "run_415",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 10
+  },
+  {
+    "run_id": "run_048",
+    "policy": "Oracle-Replay",
+    "graph": "roadNet-CA",
+    "round": 3
+  },
+  {
+    "run_id": "run_042",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 12
+  },
+  {
+    "run_id": "run_409",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 4
+  },
+  {
+    "run_id": "run_171",
+    "policy": "Oracle-Replay",
+    "graph": "com-lj",
+    "round": 6
+  },
+  {
+    "run_id": "run_444",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.65",
+    "round": 9
+  },
+  {
+    "run_id": "run_367",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 7
+  },
+  {
+    "run_id": "run_156",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 6
+  },
+  {
+    "run_id": "run_191",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 11
+  },
+  {
+    "run_id": "run_118",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 13
+  },
+  {
+    "run_id": "run_017",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 2
+  },
+  {
+    "run_id": "run_223",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 13
+  },
+  {
+    "run_id": "run_288",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.25",
+    "round": 3
+  },
+  {
+    "run_id": "run_325",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 10
+  },
+  {
+    "run_id": "run_323",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 8
+  },
+  {
+    "run_id": "run_032",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 2
+  },
+  {
+    "run_id": "run_211",
+    "policy": "Pure-Dynamic",
+    "graph": "com-orkut",
+    "round": 1
+  },
+  {
+    "run_id": "run_031",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 1
+  },
+  {
+    "run_id": "run_386",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.55",
+    "round": 11
+  },
+  {
+    "run_id": "run_039",
+    "policy": "Pure-Dynamic",
+    "graph": "roadNet-CA",
+    "round": 9
+  },
+  {
+    "run_id": "run_321",
+    "policy": "Pure-Static",
+    "graph": "rmat_a0.45",
+    "round": 6
+  },
+  {
+    "run_id": "run_407",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.55",
+    "round": 2
+  },
+  {
+    "run_id": "run_184",
+    "policy": "Adaptive",
+    "graph": "com-orkut",
+    "round": 4
+  },
+  {
+    "run_id": "run_203",
+    "policy": "Pure-Static",
+    "graph": "com-orkut",
+    "round": 8
+  },
+  {
+    "run_id": "run_333",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 3
+  },
+  {
+    "run_id": "run_164",
+    "policy": "Pure-Dynamic",
+    "graph": "com-lj",
+    "round": 14
+  },
+  {
+    "run_id": "run_016",
+    "policy": "Pure-Static",
+    "graph": "roadNet-CA",
+    "round": 1
+  },
+  {
+    "run_id": "run_372",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 12
+  },
+  {
+    "run_id": "run_010",
+    "policy": "Adaptive",
+    "graph": "roadNet-CA",
+    "round": 10
+  },
+  {
+    "run_id": "run_064",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 4
+  },
+  {
+    "run_id": "run_107",
+    "policy": "Oracle-Replay",
+    "graph": "web-Google",
+    "round": 2
+  },
+  {
+    "run_id": "run_373",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.55",
+    "round": 13
+  },
+  {
+    "run_id": "run_479",
+    "policy": "Oracle-Replay",
+    "graph": "rmat_a0.65",
+    "round": 14
+  },
+  {
+    "run_id": "run_309",
+    "policy": "Adaptive",
+    "graph": "rmat_a0.45",
+    "round": 9
+  },
+  {
+    "run_id": "run_067",
+    "policy": "Adaptive",
+    "graph": "web-Google",
+    "round": 7
+  },
+  {
+    "run_id": "run_341",
+    "policy": "Pure-Dynamic",
+    "graph": "rmat_a0.45",
+    "round": 11
+  }
+]

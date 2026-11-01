@@ -15,7 +15,7 @@
 struct RunnerConfig {
   std::string manifest_path{"results/manifest.json"};
   std::string runs_jsonl_path{"results/runs.jsonl"};
-  std::string csv_output_path{"results/raw_eval.csv"};
+  std::string csv_output_path{"results/levels.csv"};
   std::string env_inputs_path{"results/env/inputs.txt"};
   std::string thresholds_path{"config/thresholds.json"};
   bool allow_dirty{false};
