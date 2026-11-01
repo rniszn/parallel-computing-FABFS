@@ -110,7 +110,7 @@ bool BenchmarkRunner::initialize(std::string* error_msg) {
   }
 
   // Validate manifest
-  size_t expected = config_.dry_run ? 8 : 480;
+  size_t expected = config_.expected_manifest_count > 0 ? config_.expected_manifest_count : (config_.dry_run ? 8 : 480);
   if (!validate_manifest(manifest_, error_msg, expected, config_.dry_run)) {
     return false;
   }

@@ -24,6 +24,7 @@ struct RunnerConfig {
   int threads{4};
   uint32_t gpu_min_batch{4096};
   bool dry_run{false};
+  size_t expected_manifest_count{0};
   int kill_after_rows{0}; // Testing hook: self-terminate with SIGKILL after writing N rows
 };
 

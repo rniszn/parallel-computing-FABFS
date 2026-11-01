@@ -22,3 +22,4 @@
 {"run_id": "run_055", "status": "complete", "graph": "roadNet-CA", "policy": "Oracle-Replay", "round": 10}
 {"run_id": "run_018", "status": "complete", "graph": "roadNet-CA", "policy": "Pure-Static", "round": 3}
 {"run_id": "run_355", "status": "complete", "graph": "rmat_a0.45", "policy": "Oracle-Replay", "round": 10}
+{"run_id": "demo_rmat10_run1", "status": "complete", "graph": "rmat10_seed1", "policy": "Adaptive", "round": 0, "graph_hash": "f08f523017e5d6bb178bcf27ed02e58a249a4fee9b3c5a79a2f3da7d56dbdf46"}
