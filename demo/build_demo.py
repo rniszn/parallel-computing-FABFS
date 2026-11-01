@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
 M10: Demo builder script.
-Reads one run's rows from results/levels.csv and demo/demo_run.csv,
+Reads baseline run from results/levels.csv and demo/demo_run.csv,
 reads demo/demo_graph.bin, validates run_id and graph hash integrity,
-and generates demo/fabfs_demo.html (a self-contained, offline HTML visualizer).
+extracts real evaluation graph runs (web-Google, com-lj, roadNet-CA),
+and generates demo/fabfs_demo.html (a self-contained, offline multi-graph HTML visualizer).
 """
 
 import os
@@ -124,20 +125,13 @@ def generate_node_layout(n, row_offsets, col_indices, demo_df):
     """
     np.random.seed(42)
 
-    # Group vertices by approximate level or degree
-    # For small demo graphs (1024 nodes), layout in concentric rings by level
-    # Source node (0) at center (500, 400)
     coords = []
     center_x, center_y = 520, 380
 
-    # Collect degrees
     degrees = np.diff(row_offsets)
-
-    # Ring radius per level
     num_levels = len(demo_df)
     ring_radii = np.linspace(60, 320, num_levels + 1)
 
-    # Distribute nodes across rings based on degrees / level distribution
     node_levels = np.zeros(n, dtype=int)
     nodes_per_level = [int(r["frontier_size"]) for _, r in demo_df.iterrows()]
 
@@ -149,7 +143,6 @@ def generate_node_layout(n, row_offsets, col_indices, demo_df):
     if assigned < n:
         node_levels[assigned:] = num_levels - 1
 
-    # Place nodes on their level's ring
     level_counts = {}
     for lvl in range(num_levels):
         level_counts[lvl] = np.sum(node_levels == lvl)
@@ -164,13 +157,11 @@ def generate_node_layout(n, row_offsets, col_indices, demo_df):
         level_idx[lvl] += 1
 
         angle = (2.0 * np.pi * idx_in_lvl / total_in_lvl) + (lvl * 0.4)
-        # Small jitter
         r_jitter = radius + (np.random.rand() - 0.5) * 16.0
         x = center_x + r_jitter * np.cos(angle)
         y = center_y + r_jitter * np.sin(angle)
         coords.append({"id": int(i), "x": round(float(x), 1), "y": round(float(y), 1), "level": int(lvl), "deg": int(degrees[i])})
 
-    # Pick a sample of visual edges (up to 800 edges to maintain crisp canvas rendering)
     edges = []
     edge_count = 0
     max_visual_edges = 1200
@@ -190,16 +181,11 @@ def generate_node_layout(n, row_offsets, col_indices, demo_df):
     return coords, edges
 
 
-def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds_path="config/thresholds.json"):
-    """
-    Constructs the self-contained, offline HTML demo page.
-    """
-    with open(thresholds_path, "r", encoding="utf-8") as f:
-        thresh = json.load(f)
-
-    levels_data = []
-    for _, r in demo_df.iterrows():
-        levels_data.append({
+def extract_level_records(df_subset):
+    """Converts a pandas DataFrame subset into level records for JSON serialization."""
+    records = []
+    for _, r in df_subset.iterrows():
+        records.append({
             "level": int(r["level"]),
             "frontier_size": int(r["frontier_size"]),
             "edge_work": int(r["edge_work"]),
@@ -217,18 +203,31 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
             "t_gpu_us": round(float(r["t_gpu_us"]), 1),
             "gpu_idle_us": round(float(r["gpu_idle_us"]), 1)
         })
+    return records
+
+
+def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresholds_path="config/thresholds.json"):
+    """
+    Constructs the self-contained, offline multi-graph HTML demo page.
+    """
+    with open(thresholds_path, "r", encoding="utf-8") as f:
+        thresh = json.load(f)
+
+    datasets_json = json.dumps(datasets_dict)
+    thresh_json = json.dumps(thresh)
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FABFS Live Algorithm & Frontier Telemetry Demo</title>
+<title>FABFS Multi-Graph Adaptive BFS Telemetry & Evaluator Visualizer</title>
 <style>
   :root {{
-    --bg-dark: #0f172a;
-    --panel-bg: #1e293b;
-    --border-color: #334155;
+    --bg-dark: #0b0f19;
+    --panel-bg: #131b2e;
+    --card-bg: #090d16;
+    --border-color: #24324d;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --accent-blue: #38bdf8;
@@ -252,10 +251,12 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
   header {{
     background: var(--panel-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 12px 24px;
+    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
+    z-index: 10;
   }}
   .brand {{
     display: flex;
@@ -264,30 +265,57 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
   }}
   .logo {{
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     letter-spacing: -0.5px;
     color: var(--text-primary);
   }}
   .logo span {{ color: var(--accent-blue); }}
   .tag {{
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     background: #0284c7;
     color: white;
     padding: 3px 8px;
     border-radius: 4px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+  }}
+  .graph-select-container {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }}
+  .graph-select-label {{
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+  }}
+  #graphSelect {{
+    background: #090d16;
+    color: var(--accent-blue);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+  }}
+  #graphSelect:hover, #graphSelect:focus {{
+    border-color: var(--accent-blue);
   }}
   .meta-pills {{
     display: flex;
-    gap: 12px;
-    font-size: 0.8rem;
+    gap: 10px;
+    font-size: 0.78rem;
     color: var(--text-secondary);
   }}
   .pill {{
-    background: #0f172a;
+    background: #090d16;
     padding: 4px 10px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
+    white-space: nowrap;
   }}
   .pill strong {{ color: var(--text-primary); }}
 
@@ -299,7 +327,9 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
   .canvas-panel {{
     flex: 1;
     position: relative;
-    background: #090d16;
+    background: #060911;
+    display: flex;
+    flex-direction: column;
   }}
   canvas {{
     display: block;
@@ -315,92 +345,120 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     overflow-y: auto;
   }}
   .panel-section {{
-    padding: 16px;
+    padding: 14px 18px;
     border-bottom: 1px solid var(--border-color);
   }}
   .panel-title {{
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }}
   .controls-bar {{
     position: absolute;
-    bottom: 24px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(30, 41, 59, 0.95);
+    background: rgba(19, 27, 46, 0.95);
     border: 1px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: 30px;
+    padding: 8px 18px;
+    border-radius: 32px;
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    z-index: 5;
   }}
   button {{
-    background: #334155;
+    background: #24324d;
     border: none;
     color: white;
-    padding: 8px 16px;
+    padding: 7px 14px;
     border-radius: 20px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: background 0.2s;
+    transition: background 0.15s;
   }}
-  button:hover {{ background: #475569; }}
+  button:hover {{ background: #334568; }}
   button.primary {{ background: #0284c7; }}
   button.primary:hover {{ background: #0369a1; }}
   .level-badge {{
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--accent-blue);
-    min-width: 90px;
+    min-width: 110px;
     text-align: center;
   }}
+  .slider-container {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }}
+  input[type=range] {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 130px;
+    height: 6px;
+    border-radius: 3px;
+    background: #24324d;
+    outline: none;
+  }}
+  input[type=range]::-webkit-slider-thumb {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(56,189,248,0.8);
+  }}
+
   .mode-indicator {{
     display: inline-block;
     padding: 6px 14px;
     border-radius: 8px;
     font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     text-align: center;
     letter-spacing: 0.5px;
+    transition: all 0.2s;
   }}
-  .mode-SEQ {{ background: rgba(56, 189, 248, 0.15); color: var(--mode-seq); border: 1px solid var(--mode-seq); }}
-  .mode-STATIC {{ background: rgba(74, 222, 128, 0.15); color: var(--mode-static); border: 1px solid var(--mode-static); }}
-  .mode-DYNAMIC {{ background: rgba(251, 146, 60, 0.15); color: var(--mode-dynamic); border: 1px solid var(--mode-dynamic); }}
+  .mode-SEQ {{ background: rgba(56, 189, 248, 0.15); color: var(--mode-seq); border: 1px solid var(--mode-seq); box-shadow: 0 0 12px rgba(56,189,248,0.25); }}
+  .mode-STATIC {{ background: rgba(74, 222, 128, 0.15); color: var(--mode-static); border: 1px solid var(--mode-static); box-shadow: 0 0 12px rgba(74,222,128,0.25); }}
+  .mode-DYNAMIC {{ background: rgba(251, 146, 60, 0.15); color: var(--mode-dynamic); border: 1px solid var(--mode-dynamic); box-shadow: 0 0 12px rgba(251,146,60,0.25); }}
 
   .grid-2 {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
   }}
   .stat-card {{
-    background: #0f172a;
-    padding: 10px 12px;
+    background: var(--card-bg);
+    padding: 9px 12px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
   }}
-  .stat-label {{ font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 4px; }}
-  .stat-value {{ font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }}
-  .stat-sub {{ font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px; }}
+  .stat-label {{ font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 3px; }}
+  .stat-value {{ font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }}
+  .stat-sub {{ font-size: 0.68rem; color: var(--text-secondary); margin-top: 2px; }}
 
   .decision-box {{
-    background: #0f172a;
+    background: var(--card-bg);
     border-left: 4px solid var(--accent-blue);
-    padding: 12px;
+    padding: 11px 13px;
     border-radius: 4px;
-    font-size: 0.82rem;
-    line-height: 1.4;
+    font-size: 0.8rem;
+    line-height: 1.45;
     color: var(--text-secondary);
   }}
   .decision-box strong {{ color: var(--text-primary); }}
@@ -409,26 +467,27 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.75rem;
-    margin-bottom: 6px;
+    font-size: 0.74rem;
+    margin-bottom: 5px;
   }}
   .legend-dot {{
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
   }}
   .toast {{
     position: absolute;
-    top: 20px;
+    top: 16px;
     left: 20px;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(9, 13, 22, 0.9);
     border: 1px solid var(--border-color);
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-size: 0.82rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
     color: var(--text-secondary);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
     pointer-events: none;
+    z-index: 5;
   }}
 </style>
 </head>
@@ -436,21 +495,33 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
 
 <header>
   <div class="brand">
-    <div class="logo">FABFS <span>Interactive Visualizer</span></div>
-    <div class="tag">M10 Replay Engine</div>
+    <div class="logo">FABFS <span>Visualizer</span></div>
+    <div class="tag">M10 Multi-Graph</div>
   </div>
+
+  <div class="graph-select-container">
+    <div class="graph-select-label">Select Graph:</div>
+    <select id="graphSelect" onchange="switchDataset(this.value)">
+      <option value="rmat10_seed1">rmat10_seed1 (1K Nodes — 2D Topology)</option>
+      <option value="web-Google">web-Google (875K Nodes — Phase Transitions)</option>
+      <option value="com-lj">com-lj (4.0M Nodes — Heavy Hub Skew)</option>
+      <option value="roadNet-CA">roadNet-CA (1.9M Nodes — High Diameter Planar)</option>
+    </select>
+  </div>
+
   <div class="meta-pills">
-    <div class="pill">Graph: <strong>{graph_name}</strong></div>
-    <div class="pill">Run ID: <strong>{run_id}</strong></div>
-    <div class="pill">Policy: <strong>Frontier-Adaptive</strong></div>
-    <div class="pill">Commit: <strong>{thresh.get('calibration_commit', '')[:8]}</strong></div>
+    <div class="pill">Graph: <strong id="pillGraph">rmat10_seed1</strong></div>
+    <div class="pill">Run ID: <strong id="pillRunId">demo_rmat10_run1</strong></div>
+    <div class="pill">Vertices: <strong id="pillVertices">1,024</strong></div>
+    <div class="pill">Edges: <strong id="pillEdges">4,960</strong></div>
+    <div class="pill">Policy: <strong>Adaptive</strong></div>
   </div>
 </header>
 
 <div class="main-container">
   <div class="canvas-panel">
-    <div class="toast">
-      Tip: Click 'Step' or 'Play' to observe level-by-level adaptive dispatch decisions.
+    <div class="toast" id="viewModeToast">
+      2D Concentric Topology View &bull; Step through levels to watch frontier pulse and mode transitions.
     </div>
     <canvas id="graphCanvas"></canvas>
     
@@ -459,7 +530,10 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
       <button class="primary" id="playBtn" onclick="togglePlay()">&#9654; Play</button>
       <button onclick="nextLevel()">Next &#9654;</button>
       <button onclick="resetBFS()">&#8634; Reset</button>
-      <div class="level-badge" id="levelIndicator">Level 0 / {len(levels_data)-1}</div>
+      <div class="slider-container">
+        <input type="range" id="levelSlider" min="0" max="3" value="0" oninput="seekLevel(parseInt(this.value))">
+      </div>
+      <div class="level-badge" id="levelIndicator">Level 0 / 3</div>
     </div>
   </div>
 
@@ -480,7 +554,7 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
         <div class="stat-card">
           <div class="stat-label">Frontier Size |F_l|</div>
           <div class="stat-value" id="valFrontier">0</div>
-          <div class="stat-sub">Active vertices</div>
+          <div class="stat-sub">Active vertices in level</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Active Edges |E_l|</div>
@@ -495,7 +569,7 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
         <div class="stat-card">
           <div class="stat-label">Max Degree (dmax)</div>
           <div class="stat-value" id="valDmax">0</div>
-          <div class="stat-sub">Peak hub degree</div>
+          <div class="stat-sub">Peak hub degree in F_l</div>
         </div>
       </div>
     </div>
@@ -527,11 +601,11 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     </div>
 
     <div class="panel-section">
-      <div class="panel-title">Calibration Constants (Frozen)</div>
-      <div style="font-size: 0.76rem; color: var(--text-secondary); line-height: 1.6;">
-        <div>&bull; T_min = <strong>{thresh.get('T_min', 1024)}</strong> vertices</div>
-        <div>&bull; T_CV = <strong>{thresh.get('T_CV', 1.5)}</strong></div>
-        <div>&bull; T_par = <strong>{thresh.get('T_par', 8192)}</strong> vertices</div>
+      <div class="panel-title">Calibration Constants (Frozen Gate 1)</div>
+      <div style="font-size: 0.74rem; color: var(--text-secondary); line-height: 1.6;">
+        <div>&bull; T_min = <strong>{thresh.get('T_min', 1024)}</strong> vertices (Sequential threshold)</div>
+        <div>&bull; T_CV = <strong>{thresh.get('T_CV', 1.5)}</strong> (Degree skew threshold)</div>
+        <div>&bull; T_par = <strong>{thresh.get('T_par', 8192)}</strong> vertices (Parallel cutoff)</div>
         <div>&bull; Static GPU Share (&alpha;) = <strong>{thresh.get('alpha', 0.1526)}</strong></div>
         <div>&bull; Deque Steal Latency (C_steal) = <strong>{thresh.get('C_steal_ns', 135.6)} ns</strong></div>
         <div>&bull; GPU Kernel Launch Latency (L) = <strong>{thresh.get('L_launch_us', 39.99)} us</strong></div>
@@ -540,21 +614,20 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
 
     <div class="panel-section">
       <div class="panel-title">Visual Legend</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #38bdf8;"></div> <strong>SEQ Mode:</strong> Single CPU Thread (|F| &lt; 1,024)</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #4ade80;"></div> <strong>STATIC Mode:</strong> Edge-Balanced CPU/GPU Split</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #fb923c;"></div> <strong>DYNAMIC Mode:</strong> Chase-Lev Work-Stealing</div>
       <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div> Source Vertex (Level 0)</div>
-      <div class="legend-item"><div class="legend-dot" style="background: #38bdf8;"></div> Visited (SEQ mode)</div>
-      <div class="legend-item"><div class="legend-dot" style="background: #4ade80;"></div> Visited (STATIC mode - GPU/CPU split)</div>
-      <div class="legend-item"><div class="legend-dot" style="background: #fb923c;"></div> Visited (DYNAMIC mode - Work Stealing)</div>
-      <div class="legend-item"><div class="legend-dot" style="background: #334155;"></div> Unvisited Vertices</div>
+      <div class="legend-item"><div class="legend-dot" style="background: #334155;"></div> Unvisited Vertices / Inactive Levels</div>
     </div>
   </div>
 </div>
 
 <script>
-  const levelsData = {json.dumps(levels_data)};
-  const coordsData = {json.dumps(coords)};
-  const edgesData = {json.dumps(edges)};
-  const thresholds = {json.dumps(thresh)};
+  const allDatasets = {datasets_json};
+  const thresholds = {thresh_json};
 
+  let activeDatasetKey = "{default_dataset}";
   let currentLevel = 0;
   let isPlaying = false;
   let timer = null;
@@ -562,17 +635,83 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
   const canvas = document.getElementById("graphCanvas");
   const ctx = canvas.getContext("2d");
 
+  function getActiveDataset() {{
+    return allDatasets[activeDatasetKey];
+  }}
+
+  function switchDataset(key) {{
+    if (isPlaying) togglePlay();
+    activeDatasetKey = key;
+    currentLevel = 0;
+
+    const ds = getActiveDataset();
+    document.getElementById("pillGraph").innerText = ds.name;
+    document.getElementById("pillRunId").innerText = ds.run_id;
+    document.getElementById("pillVertices").innerText = Number(ds.nodes).toLocaleString();
+    document.getElementById("pillEdges").innerText = Number(ds.edges).toLocaleString();
+
+    const slider = document.getElementById("levelSlider");
+    slider.max = ds.levels.length - 1;
+    slider.value = 0;
+
+    const toast = document.getElementById("viewModeToast");
+    if (ds.has_node_layout) {{
+      toast.innerHTML = `<strong>2D Concentric Topology View:</strong> ${{ds.name}} &bull; ${{ds.nodes}} nodes &bull; Step or Play to watch frontier expansion.`;
+    }} else {{
+      toast.innerHTML = `<strong>Frontier Wave & Mode Profile:</strong> ${{ds.name}} (${{ds.category}}) &bull; ${{ds.nodes.toLocaleString()}} vertices &bull; Click any level bar to inspect telemetry.`;
+    }}
+
+    updateHUD();
+    drawScene();
+  }}
+
   function resizeCanvas() {{
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight;
-    drawGraph();
+    drawScene();
   }}
   window.addEventListener("resize", resizeCanvas);
 
-  function drawGraph() {{
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Click on canvas to jump directly to level when in Wave Profile view
+  canvas.addEventListener("click", (evt) => {{
+    const ds = getActiveDataset();
+    if (ds.has_node_layout) return;
 
-    // Scale coordinates to fit viewport
+    const rect = canvas.getBoundingClientRect();
+    const x = evt.clientX - rect.left;
+    const y = evt.clientY - rect.top;
+
+    const chartLeft = 50;
+    const chartRight = canvas.width - 50;
+    const chartTop = 60;
+    const chartBottom = canvas.height * 0.62;
+
+    if (x >= chartLeft && x <= chartRight && y >= chartTop && y <= chartBottom) {{
+      const numLevels = ds.levels.length;
+      const barWidth = (chartRight - chartLeft) / numLevels;
+      const clickedIdx = Math.floor((x - chartLeft) / barWidth);
+      if (clickedIdx >= 0 && clickedIdx < numLevels) {{
+        seekLevel(clickedIdx);
+      }}
+    }}
+  }});
+
+  function drawScene() {{
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ds = getActiveDataset();
+
+    if (ds.has_node_layout) {{
+      drawGraphTopology(ds);
+    }} else {{
+      drawFrontierWaveProfile(ds);
+    }}
+  }}
+
+  function drawGraphTopology(ds) {{
+    const coordsData = ds.coords;
+    const edgesData = ds.edges_sample;
+    const levelsData = ds.levels;
+
     const scaleX = canvas.width / 1050;
     const scaleY = canvas.height / 760;
 
@@ -599,7 +738,6 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
 
       ctx.beginPath();
       if (n.id === 0) {{
-        // Source node
         ctx.arc(px, py, 6, 0, 2 * Math.PI);
         ctx.fillStyle = "#f59e0b";
         ctx.shadowColor = "#f59e0b";
@@ -607,32 +745,245 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
         ctx.fill();
         ctx.shadowBlur = 0;
       }} else if (n.level < currentLevel) {{
-        // Visited in past level
         ctx.arc(px, py, 2.8, 0, 2 * Math.PI);
         const lMode = levelsData[n.level] ? levelsData[n.level].mode_chosen : "SEQ";
         ctx.fillStyle = lMode === "STATIC" ? "#4ade80" : (lMode === "DYNAMIC" ? "#fb923c" : "#38bdf8");
         ctx.fill();
       }} else if (n.level === currentLevel) {{
-        // Active frontier
-        ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
+        ctx.arc(px, py, 4.8, 0, 2 * Math.PI);
         const lMode = levelsData[currentLevel] ? levelsData[currentLevel].mode_chosen : "SEQ";
         ctx.fillStyle = lMode === "STATIC" ? "#4ade80" : (lMode === "DYNAMIC" ? "#fb923c" : "#38bdf8");
         ctx.shadowColor = ctx.fillStyle;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 9;
         ctx.fill();
         ctx.shadowBlur = 0;
       }} else {{
-        // Unvisited
         ctx.arc(px, py, 1.8, 0, 2 * Math.PI);
-        ctx.fillStyle = "#334155";
+        ctx.fillStyle = "#24324d";
         ctx.fill();
       }}
     }}
   }}
 
+  function drawFrontierWaveProfile(ds) {{
+    const levels = ds.levels;
+    const numLevels = levels.length;
+
+    const chartLeft = 50;
+    const chartRight = canvas.width - 50;
+    const chartTop = 70;
+    const chartBottom = canvas.height * 0.60;
+    const chartWidth = chartRight - chartLeft;
+    const chartHeight = chartBottom - chartTop;
+
+    // Header Title on Canvas
+    ctx.fillStyle = "#f8fafc";
+    ctx.font = "bold 15px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.fillText(`${{ds.name}} &mdash; Dynamic Frontier Wave & Mode Allocation`, chartLeft, 38);
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.fillText(`${{numLevels}} BFS Levels &bull; Click on any bar to jump &bull; Bar height: log10(|F_l| + 1)`, chartLeft, 55);
+
+    // Baseline grid line
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(chartLeft, chartBottom);
+    ctx.lineTo(chartRight, chartBottom);
+    ctx.stroke();
+
+    // Max log value for scaling
+    let maxLogF = 1;
+    for (let l of levels) {{
+      const val = Math.log10(l.frontier_size + 1);
+      if (val > maxLogF) maxLogF = val;
+    }}
+    if (maxLogF < 1) maxLogF = 1;
+
+    const barWidth = chartWidth / numLevels;
+    const barPad = numLevels > 50 ? 0 : Math.max(1, barWidth * 0.15);
+
+    // Draw bars
+    for (let i = 0; i < numLevels; ++i) {{
+      const lvl = levels[i];
+      const logF = Math.log10(lvl.frontier_size + 1);
+      const h = Math.max(4, (logF / maxLogF) * (chartHeight - 30));
+      const x = chartLeft + i * barWidth + barPad;
+      const w = Math.max(1.5, barWidth - 2 * barPad);
+      const y = chartBottom - h;
+
+      let color = "#38bdf8"; // SEQ
+      if (lvl.mode_chosen === "STATIC") color = "#4ade80";
+      else if (lvl.mode_chosen === "DYNAMIC") color = "#fb923c";
+
+      ctx.fillStyle = color;
+      if (i === currentLevel) {{
+        // Highlight active level bar
+        ctx.fillStyle = "#ffffff";
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 14;
+        ctx.fillRect(x - 1, y - 4, w + 2, h + 4);
+        ctx.shadowBlur = 0;
+
+        // Pointer triangle above bar
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x + w / 2, y - 8);
+        ctx.lineTo(x + w / 2 - 5, y - 16);
+        ctx.lineTo(x + w / 2 + 5, y - 16);
+        ctx.closePath();
+        ctx.fill();
+      }} else if (i < currentLevel) {{
+        ctx.globalAlpha = 0.85;
+        ctx.fillRect(x, y, w, h);
+        ctx.globalAlpha = 1.0;
+      }} else {{
+        ctx.globalAlpha = 0.35;
+        ctx.fillRect(x, y, w, h);
+        ctx.globalAlpha = 1.0;
+      }}
+    }}
+
+    // Degree Skew (CV) Curve overlay
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(192, 132, 252, 0.75)"; // accent purple
+    ctx.lineWidth = 1.8;
+    const maxCV = 7.0;
+    for (let i = 0; i < numLevels; ++i) {{
+      const lvl = levels[i];
+      const cx = chartLeft + i * barWidth + barWidth / 2;
+      const cy = chartBottom - (Math.min(lvl.cv, maxCV) / maxCV) * (chartHeight - 40);
+      if (i === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    }}
+    ctx.stroke();
+
+    // Threshold line T_CV = 1.5
+    const cvThreshY = chartBottom - (1.5 / maxCV) * (chartHeight - 40);
+    ctx.strokeStyle = "rgba(251, 146, 60, 0.5)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(chartLeft, cvThreshY);
+    ctx.lineTo(chartRight, cvThreshY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(251, 146, 60, 0.8)";
+    ctx.font = "11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.fillText("T_CV = 1.5", chartRight - 55, cvThreshY - 4);
+
+    // Active Engine Architecture Schematic Diagram in Lower Canvas
+    drawEngineArchitectureDiagram(chartLeft, chartRight, chartBottom + 25, canvas.height - 75, levels[currentLevel]);
+  }}
+
+  function drawEngineArchitectureDiagram(left, right, top, bottom, lvlData) {{
+    const w = right - left;
+    const h = bottom - top;
+
+    // Background card for schematic
+    ctx.fillStyle = "#0c1220";
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(left, top, w, h, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    // Schematic title
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "bold 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.fillText("ACTIVE EXECUTION DISPATCH PIPELINE", left + 16, top + 22);
+
+    const mode = lvlData ? lvlData.mode_chosen : "SEQ";
+
+    if (mode === "SEQ") {{
+      // Diagram: Single CPU Thread pipeline
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText("Single-Threaded Sequential CPU Expansion (Rule 1: |F| < 1,024)", left + 16, top + 44);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText("Frontier fits in L1/L2 cache &bull; Deque lock & GPU launch overhead strictly eliminated.", left + 16, top + 64);
+
+      // Core box
+      drawBox(left + 20, top + 76, 160, 34, "#38bdf8", "Thread 0 (Core 0)");
+      drawArrow(left + 185, top + 93, left + 230, top + 93, "#38bdf8");
+      drawBox(left + 235, top + 76, 200, 34, "#38bdf8", "Direct Bitvector Visitor");
+      drawArrow(left + 440, top + 93, left + 485, top + 93, "#38bdf8");
+      drawBox(left + 490, top + 76, 180, 34, "#38bdf8", "Zero Sync Overhead");
+    }} else if (mode === "STATIC") {{
+      // Diagram: Edge-Balanced Static CPU/GPU Split
+      ctx.fillStyle = "#4ade80";
+      ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText("Deterministic Dual-Device Edge Split (Rule 2: Low Skew CV <= 1.5 or |F| <= 8,192)", left + 16, top + 44);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText("Edge-balanced partition: GPU handles alpha=15.3% bulk edges &bull; CPU threads process remainder.", left + 16, top + 64);
+
+      drawBox(left + 20, top + 76, 180, 34, "#4ade80", "CPU Pool (84.7% Edges)");
+      drawBox(left + 215, top + 76, 200, 34, "#4ade80", "GPU RTX 4050 (15.3% Edges)");
+      drawArrow(left + 420, top + 93, left + 465, top + 93, "#4ade80");
+      drawBox(left + 470, top + 76, 200, 34, "#4ade80", "Global Barrier & Flip");
+    }} else {{
+      // Diagram: Dynamic Work Stealing
+      ctx.fillStyle = "#fb923c";
+      ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText("Chase-Lev Work-Stealing Pool with Dynamic Chunking (Rule 3: High Skew CV > 1.5)", left + 16, top + 44);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+      ctx.fillText(`Dynamic chunks C_l=${{lvlData.chunk_size}} &bull; Steal attempts: ${{lvlData.steals_attempted}} &bull; Succeeded: ${{lvlData.steals_succeeded}} &bull; Eliminates hub contention.`, left + 16, top + 64);
+
+      drawBox(left + 20, top + 76, 170, 34, "#fb923c", `Lock-Free Deques (C_l=${{lvlData.chunk_size}})`);
+      drawArrow(left + 195, top + 93, left + 235, top + 93, "#fb923c");
+      drawBox(left + 240, top + 76, 210, 34, "#fb923c", `8 Stealing Workers`);
+      drawArrow(left + 455, top + 93, left + 495, top + 93, "#fb923c");
+      drawBox(left + 500, top + 76, 180, 34, "#fb923c", "Coalesced Frontier GPU Proxy");
+    }}
+  }}
+
+  function drawBox(x, y, w, h, color, text) {{
+    ctx.strokeStyle = color;
+    ctx.fillStyle = "rgba(19, 27, 46, 0.9)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = color;
+    ctx.font = "bold 11px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(text, x + w / 2, y + h / 2 + 4);
+    ctx.textAlign = "start";
+  }}
+
+  function drawArrow(x1, y1, x2, y2, color) {{
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 5, y2 - 4);
+    ctx.lineTo(x2 - 5, y2 + 4);
+    ctx.closePath();
+    ctx.fill();
+  }}
+
   function updateHUD() {{
-    const data = levelsData[currentLevel];
-    document.getElementById("levelIndicator").innerText = `Level ${{currentLevel}} / ${{levelsData.length - 1}}`;
+    const ds = getActiveDataset();
+    const data = ds.levels[currentLevel];
+    if (!data) return;
+
+    document.getElementById("levelIndicator").innerText = `Level ${{currentLevel}} / ${{ds.levels.length - 1}}`;
+    document.getElementById("levelSlider").value = currentLevel;
 
     const modeEl = document.getElementById("modeChosen");
     modeEl.className = `mode-indicator mode-${{data.mode_chosen}}`;
@@ -652,22 +1003,32 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     document.getElementById("valGpuTime").innerText = data.t_gpu_us;
     document.getElementById("valGpuIdle").innerText = `${{data.gpu_idle_us}} us`;
 
-    // Explanation
+    // Algorithm 1 Rule Explanation
     const expl = document.getElementById("decisionExplanation");
     if (data.mode_chosen === "SEQ") {{
-      expl.innerHTML = `<strong>Rule 1 Applied:</strong> Frontier |F| (${{data.frontier_size}}) &lt; T_min (${{thresholds.T_min}}). Executed by single CPU thread to eliminate parallel scheduling overhead.`;
+      expl.innerHTML = `<strong>Rule 1 Applied:</strong> Frontier size |F| (${{Number(data.frontier_size).toLocaleString()}}) &lt; T_min (${{thresholds.T_min}}). Executed by single CPU thread to eliminate parallel synchronization overhead.`;
     }} else if (data.mode_chosen === "STATIC") {{
-      expl.innerHTML = `<strong>Rule 2 Applied:</strong> Frontier size |F| (${{data.frontier_size}}) &le; T_par (${{thresholds.T_par}}) or CV (${{data.cv}}) &le; T_CV (${{thresholds.T_CV}}). Deterministic edge-balanced split: GPU receives &alpha;=${{thresholds.alpha}} work.`;
+      expl.innerHTML = `<strong>Rule 2 Applied:</strong> Frontier size |F| (${{Number(data.frontier_size).toLocaleString()}}) &le; T_par (${{thresholds.T_par}}) or CV (${{data.cv}}) &le; T_CV (${{thresholds.T_CV}}). Deterministic edge-balanced split: GPU receives &alpha;=${{thresholds.alpha}} work.`;
     }} else {{
-      expl.innerHTML = `<strong>Rule 3 Applied:</strong> High degree skew CV (${{data.cv}}) &gt; T_CV (${{thresholds.T_CV}}) and |F| &gt; T_par. Dispatched to Chase-Lev work-stealing with dynamic chunking (C_l=${{data.chunk_size}}).`;
+      expl.innerHTML = `<strong>Rule 3 Applied:</strong> High degree skew CV (${{data.cv}}) &gt; T_CV (${{thresholds.T_CV}}) and |F| &gt; T_par (${{thresholds.T_par}}). Dispatched to Chase-Lev work-stealing with dynamic chunking (C_l=${{data.chunk_size}}).`;
+    }}
+  }}
+
+  function seekLevel(lvl) {{
+    const ds = getActiveDataset();
+    if (lvl >= 0 && lvl < ds.levels.length) {{
+      currentLevel = lvl;
+      updateHUD();
+      drawScene();
     }}
   }}
 
   function nextLevel() {{
-    if (currentLevel < levelsData.length - 1) {{
+    const ds = getActiveDataset();
+    if (currentLevel < ds.levels.length - 1) {{
       currentLevel++;
       updateHUD();
-      drawGraph();
+      drawScene();
     }} else if (isPlaying) {{
       togglePlay();
     }}
@@ -677,7 +1038,7 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     if (currentLevel > 0) {{
       currentLevel--;
       updateHUD();
-      drawGraph();
+      drawScene();
     }}
   }}
 
@@ -685,7 +1046,7 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     if (isPlaying) togglePlay();
     currentLevel = 0;
     updateHUD();
-    drawGraph();
+    drawScene();
   }}
 
   function togglePlay() {{
@@ -694,7 +1055,9 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     if (isPlaying) {{
       btn.innerHTML = "&#10074;&#10074; Pause";
       btn.style.background = "#e11d48";
-      timer = setInterval(nextLevel, 900);
+      const ds = getActiveDataset();
+      const intervalMs = ds.levels.length > 50 ? 80 : 800;
+      timer = setInterval(nextLevel, intervalMs);
     }} else {{
       btn.innerHTML = "&#9654; Play";
       btn.style.background = "#0284c7";
@@ -704,8 +1067,8 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
 
   // Initialize
   window.onload = () => {{
+    switchDataset("{default_dataset}");
     resizeCanvas();
-    updateHUD();
   }};
 </script>
 </body>
@@ -715,20 +1078,88 @@ def build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges, thresholds
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"[build_demo.py] Successfully wrote self-contained HTML demo: {out_path} ({len(html_content)} bytes)")
+    print(f"[build_demo.py] Successfully wrote self-contained multi-graph HTML demo: {out_path} ({len(html_content)} bytes)")
     return out_path
 
 
 def main():
-    print("[build_demo.py] Validating demo run and generating visualizer...")
-    demo_df, run_id, graph_name = validate_demo_run()
+    print("[build_demo.py] Validating demo run and generating multi-graph visualizer...")
+    demo_df, rmat_run_id, rmat_graph_name = validate_demo_run()
     bin_path = "demo/demo_graph.bin"
     n, m, row_offsets, col_indices = load_binary_graph(bin_path)
     print(f"[build_demo.py] Loaded {bin_path}: n={n}, m={m}")
 
-    coords, edges = generate_node_layout(n, row_offsets, col_indices, demo_df)
-    out_html = build_fabfs_demo_html(demo_df, run_id, graph_name, coords, edges)
-    print(f"[build_demo.py] Verification complete. Demo is ready at {out_html}")
+    coords, edges_sample = generate_node_layout(n, row_offsets, col_indices, demo_df)
+
+    # Read full levels.csv to extract real evaluation graph traces
+    levels_df = pd.read_csv("results/levels.csv")
+
+    datasets_dict = {}
+
+    # 1. rmat10_seed1 (Synthetic R-MAT with 2D node layout)
+    datasets_dict["rmat10_seed1"] = {
+        "key": "rmat10_seed1",
+        "name": "rmat10_seed1",
+        "category": "Synthetic R-MAT (Scale 10)",
+        "nodes": int(n),
+        "edges": int(m),
+        "run_id": rmat_run_id,
+        "has_node_layout": True,
+        "coords": coords,
+        "edges_sample": edges_sample,
+        "levels": extract_level_records(demo_df)
+    }
+
+    # 2. web-Google (Real web crawl with SEQ -> STATIC -> DYNAMIC -> STATIC -> SEQ)
+    web_run_id = "run_062"
+    web_sub = levels_df[levels_df["run_id"] == web_run_id]
+    if len(web_sub) > 0:
+        datasets_dict["web-Google"] = {
+            "key": "web-Google",
+            "name": "web-Google",
+            "category": "Web Crawl Graph",
+            "nodes": 875713,
+            "edges": 5105039,
+            "run_id": web_run_id,
+            "has_node_layout": False,
+            "levels": extract_level_records(web_sub)
+        }
+        print(f"[build_demo.py] Embedded web-Google ({web_run_id}): {len(web_sub)} levels")
+
+    # 3. com-lj (LiveJournal social network with heavy degree skew)
+    lj_run_id = "run_126"
+    lj_sub = levels_df[levels_df["run_id"] == lj_run_id]
+    if len(lj_sub) > 0:
+        datasets_dict["com-lj"] = {
+            "key": "com-lj",
+            "name": "com-lj",
+            "category": "Social Network (LiveJournal)",
+            "nodes": 3997962,
+            "edges": 34681189,
+            "run_id": lj_run_id,
+            "has_node_layout": False,
+            "levels": extract_level_records(lj_sub)
+        }
+        print(f"[build_demo.py] Embedded com-lj ({lj_run_id}): {len(lj_sub)} levels")
+
+    # 4. roadNet-CA (California road network, planar, 555 levels)
+    road_run_id = "run_005"
+    road_sub = levels_df[levels_df["run_id"] == road_run_id]
+    if len(road_sub) > 0:
+        datasets_dict["roadNet-CA"] = {
+            "key": "roadNet-CA",
+            "name": "roadNet-CA",
+            "category": "Planar Road Network",
+            "nodes": 1965206,
+            "edges": 5533214,
+            "run_id": road_run_id,
+            "has_node_layout": False,
+            "levels": extract_level_records(road_sub)
+        }
+        print(f"[build_demo.py] Embedded roadNet-CA ({road_run_id}): {len(road_sub)} levels")
+
+    out_html = build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1")
+    print(f"[build_demo.py] Multi-graph demo build complete: {out_html}")
 
 
 if __name__ == "__main__":
