@@ -8,3 +8,10 @@ tests/test_sched
 tests/test_deque
 tests/test_deque_tsan
 tests/test_sched_debug
+tests/test_bench
+tests/fixtures/bad_manifest.json
+tests/fixtures/dry_run_test/
+tests/fixtures/test_env/
+tests/fixtures/test_resume/
+__pycache__/
+*.pyc

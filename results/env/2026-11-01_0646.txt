@@ -1,0 +1,30 @@
+# FABFS Environment Telemetry Capture
+# Date: 2026-11-01T06:46:48Z
+# Hostname: rniszn
+git_commit: 32590966e076151505d85d87edf85795aa25f7f7-dirty
+is_dirty: 1
+
+--- System & CPU ---
+Linux rniszn 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+Architecture:                         x86_64
+CPU(s):                               12
+Model name:                           13th Gen Intel(R) Core(TM) i5-13420H
+Thread(s) per core:                   2
+Core(s) per socket:                   6
+NUMA node0 CPU(s):                    0-11
+               total        used        free      shared  buff/cache   available
+Mem:           7.6Gi       842Mi       6.3Gi       3.5Mi       651Mi       6.8Gi
+Swap:          2.0Gi          0B       2.0Gi
+
+--- GPU & Driver Telemetry ---
+name, driver_version, memory.total [MiB], power.management, power.draw [W], clocks.current.graphics [MHz], temperature.gpu
+NVIDIA GeForce RTX 4050 Laptop GPU, 592.82, 6141 MiB, [Requested functionality has been deprecated], 1.49 W, 210 MHz, 44
+
+--- CUDA Version ---
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2023 NVIDIA Corporation
+Built on Fri_Jan__6_16:45:21_PST_2023
+Cuda compilation tools, release 12.0, V12.0.140
+Build cuda_12.0.r12.0/compiler.32267302_0
+
+--- Power Profile ---

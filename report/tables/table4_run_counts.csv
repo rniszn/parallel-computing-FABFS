@@ -1,0 +1,9 @@
+Graph,Adaptive,Pure-Static,Pure-Dynamic,Oracle-Replay
+com-lj,1,2,0,0
+com-orkut,0,0,0,1
+rmat_a0.25,0,0,1,0
+rmat_a0.45,0,0,3,0
+rmat_a0.55,0,1,1,0
+rmat_a0.65,0,0,1,1
+roadNet-CA,1,2,0,4
+web-Google,1,0,1,2

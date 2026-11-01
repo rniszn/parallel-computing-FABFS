@@ -1,0 +1,9 @@
+Graph,Adaptive (ms),Static (ms),Dynamic (ms),Best Fixed (ms),Diff (%),Result
+com-lj,19007.23,1508.19,N/A,1508.19,+1160.26%,FAIL
+com-orkut,N/A,N/A,N/A,N/A,N/A,FAIL
+rmat_a0.25,N/A,N/A,1413.57,N/A,N/A,FAIL
+rmat_a0.45,N/A,N/A,2490.48,N/A,N/A,FAIL
+rmat_a0.55,N/A,633.11,2237.69,633.11,N/A,FAIL
+rmat_a0.65,N/A,N/A,1362.70,N/A,N/A,FAIL
+roadNet-CA,1277.51,2771.70,N/A,2771.70,-53.91%,PASS
+web-Google,1593.36,N/A,1751.72,N/A,N/A,FAIL

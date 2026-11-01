@@ -1,0 +1,198 @@
+=== FABFS M9 Analysis Pipeline Run ===
+Timestamp: Sun Nov  1 07:09:49 UTC 2026
+Input Dataset: results/levels.csv
+SHA256: 93a537a168016fd6d879d872dfdfe8e65ea3cbe6cc956498e1948bdc010cd0dd
+Row Count: 4055
+--------------------------------------------------------
+[Stage 1/5] Running analysis/load.py...
+Data successfully validated and loaded:
+  Rows: 4054
+  Completed Runs: 23
+  Timeout Runs: 0
+  Graphs (8): ['com-lj', 'com-orkut', 'rmat_a0.25', 'rmat_a0.45', 'rmat_a0.55', 'rmat_a0.65', 'roadNet-CA', 'web-Google']
+  Policies (4): ['Adaptive', 'Oracle-Replay', 'Pure-Dynamic', 'Pure-Static']
+  Gate 1 Commit: 8dd8ad730e2eb6c5bf6e9491eb8401f9c7d792e3
+--------------------------------------------------------
+[Stage 2/5] Running analysis/stats.py...
+
+======================================================================
+FABFS Policy Total Time Statistics (Median and 95% Bootstrap CI)
+======================================================================
+
+Graph: com-lj
+  Adaptive        : 19007.232 ms  [95% CI: 19007.232 - 19007.232]  (N=1)
+  Oracle-Replay   :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Dynamic    :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Static     :  1508.194 ms  [95% CI: 1448.811 - 1567.577]  (N=2)
+
+Graph: com-orkut
+  Adaptive        :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Oracle-Replay   :  2665.756 ms  [95% CI: 2665.756 - 2665.756]  (N=1)
+  Pure-Dynamic    :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Static     :       nan ms  [95% CI:      nan -      nan]  (N=0)
+
+Graph: rmat_a0.25
+  Adaptive        :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Oracle-Replay   :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Dynamic    :  1413.572 ms  [95% CI: 1413.572 - 1413.572]  (N=1)
+  Pure-Static     :       nan ms  [95% CI:      nan -      nan]  (N=0)
+
+Graph: rmat_a0.45
+  Adaptive        :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Oracle-Replay   :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Dynamic    :  2490.480 ms  [95% CI: 2235.412 - 5714.245]  (N=3)
+  Pure-Static     :       nan ms  [95% CI:      nan -      nan]  (N=0)
+
+Graph: rmat_a0.55
+  Adaptive        :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Oracle-Replay   :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Dynamic    :  2237.685 ms  [95% CI: 2237.685 - 2237.685]  (N=1)
+  Pure-Static     :   633.113 ms  [95% CI:  633.113 -  633.113]  (N=1)
+
+Graph: rmat_a0.65
+  Adaptive        :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Oracle-Replay   :   378.250 ms  [95% CI:  378.250 -  378.250]  (N=1)
+  Pure-Dynamic    :  1362.696 ms  [95% CI: 1362.696 - 1362.696]  (N=1)
+  Pure-Static     :       nan ms  [95% CI:      nan -      nan]  (N=0)
+
+Graph: roadNet-CA
+  Adaptive        :  1277.511 ms  [95% CI: 1277.511 - 1277.511]  (N=1)
+  Oracle-Replay   :   178.817 ms  [95% CI:   95.680 -  290.131]  (N=4)
+  Pure-Dynamic    :       nan ms  [95% CI:      nan -      nan]  (N=0)
+  Pure-Static     :  2771.699 ms  [95% CI: 1172.169 - 4371.228]  (N=2)
+
+Graph: web-Google
+  Adaptive        :  1593.365 ms  [95% CI: 1593.365 - 1593.365]  (N=1)
+  Oracle-Replay   :   687.830 ms  [95% CI:  501.544 -  874.115]  (N=2)
+  Pure-Dynamic    :  1751.718 ms  [95% CI: 1751.718 - 1751.718]  (N=1)
+  Pure-Static     :       nan ms  [95% CI:      nan -      nan]  (N=0)
+
+======================================================================
+Pass/Fail Evaluation Check: Adaptive <= 1.05 * min(Static, Dynamic)
+======================================================================
+  com-lj          : Adaptive=19007.23 ms | BestFixed= 1508.19 ms | Diff=+1160.26% | [FAIL]
+  com-orkut       : Adaptive=     nan ms | BestFixed=     nan ms | Diff=    N/A | [FAIL]
+  rmat_a0.25      : Adaptive=     nan ms | BestFixed=     nan ms | Diff=    N/A | [FAIL]
+  rmat_a0.45      : Adaptive=     nan ms | BestFixed=     nan ms | Diff=    N/A | [FAIL]
+  rmat_a0.55      : Adaptive=     nan ms | BestFixed=  633.11 ms | Diff=    N/A | [FAIL]
+  rmat_a0.65      : Adaptive=     nan ms | BestFixed=     nan ms | Diff=    N/A | [FAIL]
+  roadNet-CA      : Adaptive= 1277.51 ms | BestFixed= 2771.70 ms | Diff=-53.91% | [PASS]
+  web-Google      : Adaptive= 1593.36 ms | BestFixed=     nan ms | Diff=    N/A | [FAIL]
+
+======================================================================
+OVERALL STATUS: FAIL
+======================================================================
+--------------------------------------------------------
+[Stage 3/5] Running analysis/tables.py...
+[tables.py] Successfully generated Tables 1 to 4 in results/tables and report/tables
+--------------------------------------------------------
+[Stage 4/5] Running analysis/figures.py...
+[figures.py] Successfully generated Figures 1 to 5 in results/figures and report/figures
+--------------------------------------------------------
+[Stage 5/5] Running analysis/report_numbers.py...
+====================================================================================================
+FABFS EVALUATION REPORT: OFFICIAL REPRODUCIBLE NUMBERS TABLE
+====================================================================================================
+
+[SECTION 1: SYSTEM ENVIRONMENT & CALIBRATED PARAMETERS]
+  Calibration Commit Hash              : 8dd8ad730e2eb6c5bf6e9491eb8401f9c7d792e3        [Source: config/thresholds.json | Col: calibration_commit]
+  Threshold T_min (Frontier size)      :           1024 vertices [Source: config/thresholds.json | Col: T_min] (Below this, SEQ mode is selected)
+  Threshold T_CV (Frontier skew)       :            1.5        [Source: config/thresholds.json | Col: T_CV] (Above this, DYNAMIC mode is selected)
+  Threshold T_par (Parallel cutoff)    :           8192 vertices [Source: config/thresholds.json | Col: T_par] (Frontier size cutoff for static split)
+  Static GPU Work Ratio (alpha)        :         0.1526        [Source: config/thresholds.json | Col: alpha] (GPU edge share in STATIC mode)
+  CPU Edge Throughput (P_cpu)          :       30161091 edges/s [Source: config/thresholds.json | Col: P_cpu_edges_per_s]
+  GPU Edge Throughput (P_gpu)          :        5381646 edges/s [Source: config/thresholds.json | Col: P_gpu_edges_per_s]
+  GPU Kernel Launch Latency (L)        :          39.99 us     [Source: config/thresholds.json | Col: L_launch_us]
+  Steal Latency (C_steal)              :          135.6 ns     [Source: config/thresholds.json | Col: C_steal_ns]
+  Dynamic Steal Chunk Max (C_max)      :           4096 vertices [Source: config/thresholds.json | Col: C_max]
+  Dynamic Steal Chunk Min (C_min)      :             32 vertices [Source: config/thresholds.json | Col: C_min]
+  GPU Minimum Batch Size               :           4096 vertices [Source: config/thresholds.json | Col: GPU_MIN_BATCH]
+
+[SECTION 2: MATRIX EXECUTION & DATASET VALIDATION]
+  Total Level Records                  :           4054 rows   [Source: results/levels.csv | Col: All rows]
+  Completed Runs                       :             23 runs   [Source: results/runs.jsonl | Col: status=complete]
+  Timed-out Runs                       :              0 runs   [Source: results/runs.jsonl | Col: status=timeout]
+  Evaluation Graphs Count              :              8 graphs [Source: results/levels.csv | Col: graph]
+  Execution Policies Count             :              4 policies [Source: results/levels.csv | Col: policy]
+  Evaluation Git Commit                : 32590966e076151505d85d87edf85795aa25f7f7-dirty        [Source: results/levels.csv | Col: git_commit]
+  NVIDIA CUDA Driver Version           :          13010        [Source: results/levels.csv | Col: driver_version]
+
+[SECTION 3: POLICY PERFORMANCE & CONFIDENCE INTERVALS]
+
+--- Graph: com-lj ---
+  com-lj Adaptive Median               :       19007.23 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [19007.23, 19007.23])
+  com-lj Pure-Static Median            :        1508.19 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1448.81, 1567.58])
+  com-lj Pure-Dynamic Median           :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  com-lj Oracle-Replay Median          :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  com-lj Speedup over Pure-Static      :          0.08x        [Source: Derived | Col: Static/Adaptive]
+
+--- Graph: com-orkut ---
+  com-orkut Adaptive Median            :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  com-orkut Pure-Static Median         :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  com-orkut Pure-Dynamic Median        :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  com-orkut Oracle-Replay Median       :        2665.76 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [2665.76, 2665.76])
+
+--- Graph: rmat_a0.25 ---
+  rmat_a0.25 Adaptive Median           :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.25 Pure-Static Median        :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.25 Pure-Dynamic Median       :        1413.57 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1413.57, 1413.57])
+  rmat_a0.25 Oracle-Replay Median      :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+
+--- Graph: rmat_a0.45 ---
+  rmat_a0.45 Adaptive Median           :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.45 Pure-Static Median        :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.45 Pure-Dynamic Median       :        2490.48 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [2235.41, 5714.24])
+  rmat_a0.45 Oracle-Replay Median      :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+
+--- Graph: rmat_a0.55 ---
+  rmat_a0.55 Adaptive Median           :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.55 Pure-Static Median        :         633.11 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [633.11, 633.11])
+  rmat_a0.55 Pure-Dynamic Median       :        2237.69 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [2237.69, 2237.69])
+  rmat_a0.55 Oracle-Replay Median      :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+
+--- Graph: rmat_a0.65 ---
+  rmat_a0.65 Adaptive Median           :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.65 Pure-Static Median        :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  rmat_a0.65 Pure-Dynamic Median       :        1362.70 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1362.70, 1362.70])
+  rmat_a0.65 Oracle-Replay Median      :         378.25 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [378.25, 378.25])
+
+--- Graph: roadNet-CA ---
+  roadNet-CA Adaptive Median           :        1277.51 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1277.51, 1277.51])
+  roadNet-CA Pure-Static Median        :        2771.70 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1172.17, 4371.23])
+  roadNet-CA Pure-Dynamic Median       :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  roadNet-CA Oracle-Replay Median      :         178.82 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [95.68, 290.13])
+  roadNet-CA Speedup over Pure-Static  :          2.17x        [Source: Derived | Col: Static/Adaptive]
+  roadNet-CA Oracle Regret             :       +614.42%        [Source: Derived | Col: (Adaptive-Oracle)/Oracle]
+
+--- Graph: web-Google ---
+  web-Google Adaptive Median           :        1593.36 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1593.36, 1593.36])
+  web-Google Pure-Static Median        :            nan ms     [Source: results/levels.csv | Col: time_us] (95% CI: [nan, nan])
+  web-Google Pure-Dynamic Median       :        1751.72 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [1751.72, 1751.72])
+  web-Google Oracle-Replay Median      :         687.83 ms     [Source: results/levels.csv | Col: time_us] (95% CI: [501.54, 874.12])
+  web-Google Speedup over Pure-Dynamic :          1.10x        [Source: Derived | Col: Dynamic/Adaptive]
+  web-Google Oracle Regret             :       +131.65%        [Source: Derived | Col: (Adaptive-Oracle)/Oracle]
+
+[SECTION 4: ADAPTIVE PASS/FAIL CRITERIA (WITHIN 5% OF BEST FIXED)]
+  com-lj Pass/Fail Status              :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: +1160.26%)
+  com-orkut Pass/Fail Status           :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  rmat_a0.25 Pass/Fail Status          :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  rmat_a0.45 Pass/Fail Status          :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  rmat_a0.55 Pass/Fail Status          :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  rmat_a0.65 Pass/Fail Status          :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  roadNet-CA Pass/Fail Status          :           PASS        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: -53.91%)
+  web-Google Pass/Fail Status          :           FAIL        [Source: results/tables/table3_pass_fail.csv | Col: passed] (Diff from best fixed: N/A)
+  Overall Evaluation Matrix Result     :           FAIL        [Source: stats.py | Col: run_pass_fail_check]
+
+[SECTION 5: SYSTEM TELEMETRY & OVERHEAD METRICS]
+  Median GPU Proxy Idle Time           :            0.0 us     [Source: results/levels.csv | Col: gpu_idle_us]
+  Mean GPU Proxy Idle Time             :           14.0 us     [Source: results/levels.csv | Col: gpu_idle_us]
+  95th Percentile GPU Idle Time        :            0.0 us     [Source: results/levels.csv | Col: gpu_idle_us]
+  Total Steals Attempted               :        3494080 steals [Source: results/levels.csv | Col: steals_attempted]
+  Total Steals Succeeded               :           6915 steals [Source: results/levels.csv | Col: steals_succeeded]
+  Overall Steal Success Rate           :          0.20%        [Source: Derived | Col: steals_succeeded/steals_attempted]
+  Total GPU Batches Dispatched         :           3288 batches [Source: results/levels.csv | Col: gpu_batches]
+
+====================================================================================================
+--------------------------------------------------------
+=== FABFS M9 Pipeline Completed (Pass/Fail: FAILED or Incomplete Matrix, exit code: 1) ===
+Analysis Log written to: results/analysis/analysis.log
