@@ -9,20 +9,33 @@
 ### Step 1: Open the Interactive Demo & Demonstrate Mode Transitions
 1. **Open the Demo:**
    - In any web browser, open the self-contained visualizer: [`demo/fabfs_demo.html`](file:///c:/Users/rohan/Desktop/SEM%205/parallel-computing-FABFS/demo/fabfs_demo.html).
-   - Point out that this is **not a mock-up**: it directly replays the exact per-level telemetry rows produced by the M7 CSV logger (`results/levels.csv`, run `demo_rmat10_run1`).
-   - Mention the graph: R-MAT Scale 10 (`rmat10_seed1`), completely disjoint from the calibration and evaluation suites, verified by SHA256 (`f08f5230...`).
+   - Point out that this is **not a mock-up**: it directly replays the exact per-level telemetry rows produced by the M7 CSV logger (`results/levels.csv`).
+   - Mention the graph selector dropdown in the header, supporting **4 distinct graph topologies**:
+     - **`rmat10_seed1`** (1,024 nodes): 2D concentric ring layout showing individual node activations and frontier pulses. Verified by SHA256 (`f08f5230...`).
+     - **`web-Google`** (875,713 nodes, run `run_062`): Real web crawl displaying full phase transitions (**`SEQ` $\rightarrow$ `STATIC` $\rightarrow$ `DYNAMIC` $\rightarrow$ `STATIC` $\rightarrow$ `SEQ`**).
+     - **`com-lj`** (3,997,962 nodes, run `run_126`): Massive LiveJournal social network exhibiting extreme degree skew ($CV > 2.0$) and Chase-Lev work-stealing chunks.
+     - **`roadNet-CA`** (1,965,206 nodes, run `run_005`): High-diameter planar California road network across 555 levels, showing how sequential dispatch prevents GPU launch thrashing on thin frontiers.
 
 2. **Step Through the Traversal & Point to Mode Decisions:**
-   - Click **Next ▶** or press **Play**:
+   - **For `rmat10_seed1`:**
+     - Click **Next ▶** or press **Play**:
      - **Level 0 ($|F|=1$):** Point to the **`SEQ MODE`** indicator. Because $|F_0| = 1 < T_{\text{min}} = 1024$, the decision engine dispatches strictly to a single CPU thread, eliminating kernel launch and thread pool synchronization overhead.
-     - **Boundary Transition & Larger Graphs:** Explain the Algorithm 1 rule:
-       $$\text{Mode}(F_l) = \begin{cases} 
-       \text{SEQ} & \text{if } |F_l| < T_{\text{min}} \\
-       \text{STATIC} & \text{else if } CV \le T_{\text{CV}} \text{ or } |F_l| \le T_{\text{par}} \\
-       \text{DYNAMIC} & \text{otherwise}
-       \end{cases}$$
-     - In dense / skewed levels (as observed on `web-Google` and `com-Orkut`), as the frontier expands beyond $T_{\text{min}}$, the policy transitions smoothly from **`SEQ` $\rightarrow$ `STATIC` $\rightarrow$ `DYNAMIC` $\rightarrow$ `STATIC` $\rightarrow$ `SEQ`**.
-     - Point out the work-stealing metrics on the HUD: dynamic chunk size $C_l$, steal attempts vs successes, and GPU proxy idle time ($\approx 0~\mu\text{s}$).
+   - **Switch to `web-Google` via the Dropdown Selector:**
+     - Select **`web-Google`** from the dropdown. The visualizer smoothly switches to the **Frontier Wave & Mode Profile** canvas view:
+       - Explain the Algorithm 1 rule:
+         $$\text{Mode}(F_l) = \begin{cases} 
+         \text{SEQ} & \text{if } |F_l| < T_{\text{min}} \\
+         \text{STATIC} & \text{else if } CV \le T_{\text{CV}} \text{ or } |F_l| \le T_{\text{par}} \\
+         \text{DYNAMIC} & \text{otherwise}
+         \end{cases}$$
+       - Use the **Level Slider** or click directly on level bars (Levels 0 through 15):
+         - **Levels 0–2 ($|F| \le 422 < 1024$):** Dispatched in **`SEQ MODE`** (cyan).
+         - **Level 3 ($|F| = 4,468 \le 8,192$):** Dispatched in **`STATIC MODE`** (green), splitting edges between CPU and GPU ($\alpha = 15.3\%$).
+         - **Levels 4–9 ($|F| = 21,226$ to $310,197 > 8,192$ and $CV = 1.62 \text{ to } 6.54 > 1.5$):** Dispatched in **`DYNAMIC MODE`** (orange) with Chase-Lev work-stealing and dynamic chunking ($C_l = 4,096$).
+         - **Levels 10–11 ($|F| \le 6,704 \le 8,192$):** Automatically switches back to **`STATIC MODE`** as the frontier recedes.
+         - **Levels 12–15 ($|F| \le 529 < 1,024$):** Switches back to **`SEQ MODE`** to finish the trailing tail with zero parallel overhead.
+       - Point out the active execution pipeline architecture rendered in the lower canvas panel, dynamically illustrating thread execution and memory paths.
+       - Point out the work-stealing metrics on the HUD: dynamic chunk size $C_l$, steal attempts vs successes, and GPU proxy idle time ($\approx 0~\mu\text{s}$).
 
 *(Fallback: If browser display is unavailable, switch to the static visual steps in [`presentation/fallback/`](file:///c:/Users/rohan/Desktop/SEM%205/parallel-computing-FABFS/presentation/fallback)).*
 
