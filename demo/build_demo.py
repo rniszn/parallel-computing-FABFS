@@ -489,6 +489,186 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     pointer-events: none;
     z-index: 5;
   }}
+
+  /* Research Questions Button and Modal */
+  .rq-button {{
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    color: white;
+    border: 1px solid #38bdf8;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    white-space: nowrap;
+  }}
+  .rq-button:hover {{
+    background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+    transform: translateY(-1px);
+  }}
+  .modal-overlay {{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 7, 13, 0.84);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }}
+  .modal-overlay.active {{
+    display: flex;
+  }}
+  .modal-content {{
+    background: #111827;
+    border: 1px solid #24324d;
+    border-radius: 12px;
+    width: 920px;
+    max-width: 94vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+  }}
+  .modal-header {{
+    padding: 16px 22px;
+    background: #151e32;
+    border-bottom: 1px solid #24324d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }}
+  .modal-title {{
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }}
+  .modal-title span {{
+    color: var(--accent-blue);
+  }}
+  .close-btn {{
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    line-height: 1;
+  }}
+  .close-btn:hover {{
+    color: #f8fafc;
+    background: #1f2937;
+  }}
+  .modal-body {{
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }}
+  .rq-card {{
+    background: #090d16;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    padding: 14px 18px;
+    transition: border-color 0.2s;
+  }}
+  .rq-card:hover {{
+    border-color: #38bdf8;
+  }}
+  .rq-question-header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }}
+  .rq-num {{
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    white-space: nowrap;
+  }}
+  .rq-question-text {{
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: #f8fafc;
+    flex: 1;
+  }}
+  .rq-verdict {{
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }}
+  .verdict-yes {{
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.4);
+  }}
+  .verdict-close {{
+    background: rgba(192, 132, 252, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(192, 132, 252, 0.4);
+  }}
+  .rq-answer-body {{
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+  }}
+  .rq-telemetry-box {{
+    background: #111827;
+    border-left: 3px solid #38bdf8;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }}
+  .rq-action-btn {{
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #38bdf8;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }}
+  .rq-action-btn:hover {{
+    background: #0284c7;
+    color: white;
+    border-color: #38bdf8;
+  }}
 </style>
 </head>
 <body>
@@ -516,6 +696,10 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     <div class="pill">Edges: <strong id="pillEdges">4,960</strong></div>
     <div class="pill">Policy: <strong>Adaptive</strong></div>
   </div>
+
+  <button class="rq-button" onclick="toggleRQModal()">
+    &#10067; Research Questions (5/5)
+  </button>
 </header>
 
 <div class="main-container">
@@ -609,6 +793,20 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
         <div>&bull; Static GPU Share (&alpha;) = <strong>{thresh.get('alpha', 0.1526)}</strong></div>
         <div>&bull; Deque Steal Latency (C_steal) = <strong>{thresh.get('C_steal_ns', 135.6)} ns</strong></div>
         <div>&bull; GPU Kernel Launch Latency (L) = <strong>{thresh.get('L_launch_us', 39.99)} us</strong></div>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-title">
+        <span>What Are We Asking?</span>
+        <button onclick="toggleRQModal()" style="padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; background: #0284c7; cursor:pointer;">Scorecard (5/5)</button>
+      </div>
+      <div style="font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;">
+        <div style="margin-bottom: 5px;"><strong>Q1: Best strategy changes across levels?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (SEQ &rarr; STATIC &rarr; DYNAMIC)</div>
+        <div style="margin-bottom: 5px;"><strong>Q2: Adaptive improves traversal time?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (+53.9% roadNet, +9.0% web-Google)</div>
+        <div style="margin-bottom: 5px;"><strong>Q3: Topology explains strategy?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (|F| & CV thresholds)</div>
+        <div style="margin-bottom: 5px;"><strong>Q4: How close to per-level oracle?</strong><br/><span style="color: #c084fc; font-weight:700;">&bull; Within 1.2% &ndash; 4.8%</span> of Oracle-Replay</div>
+        <div><strong>Q5: Generalises across graph types?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (Road, Web, Social, R-MAT)</div>
       </div>
     </div>
 
@@ -1065,12 +1263,134 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     }}
   }}
 
+  // Research Questions Modal Helpers
+  function toggleRQModal() {{
+    const modal = document.getElementById("rqModal");
+    if (modal) {{
+      modal.classList.toggle("active");
+    }}
+  }}
+
+  function jumpToQuestionDemo(graphKey, levelIdx) {{
+    toggleRQModal();
+    const select = document.getElementById("graphSelect");
+    if (select) {{
+      select.value = graphKey;
+      switchDataset(graphKey);
+      if (levelIdx !== undefined) {{
+        seekLevel(levelIdx);
+      }}
+    }}
+  }}
+
+  window.addEventListener("keydown", (e) => {{
+    if (e.key === "Escape") {{
+      const modal = document.getElementById("rqModal");
+      if (modal && modal.classList.contains("active")) {{
+        modal.classList.remove("active");
+      }}
+    }}
+  }});
+
   // Initialize
   window.onload = () => {{
     switchDataset("{default_dataset}");
     resizeCanvas();
   }};
 </script>
+
+<!-- Research Questions Modal -->
+<div class="modal-overlay" id="rqModal" onclick="if(event.target===this) toggleRQModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>What Are We Asking?</span> &bull; 5 Core Research Questions &amp; Live Evidence
+      </div>
+      <button class="close-btn" onclick="toggleRQModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Question 1 -->
+      <div class="rq-card">
+        <div class="rq-question-header">
+          <span class="rq-num">Question 1</span>
+          <div class="rq-question-text">Does the best strategy change across BFS levels?</div>
+          <span class="rq-verdict verdict-yes">Yes &bull; Confirmed</span>
+        </div>
+        <div class="rq-answer-body">
+          <strong>Finding:</strong> Frontiers undergo fundamental phase transitions as search depth expands. Initial and trailing frontiers are memory/cache-bound (|F| &lt; 1,024) where GPU launches waste milliseconds in synchronization. Middle bulk levels are compute-bound and benefit from dual-device edge splits, while hub expansions suffer severe degree skew requiring work stealing. Fixed policies incur massive overhead on mismatched levels.
+        </div>
+        <div class="rq-telemetry-box">
+          <span><strong>Live Trace Evidence:</strong> On <code>web-Google</code>, Levels 0&ndash;2 run in <strong>SEQ</strong>, Level 3 in <strong>STATIC</strong>, Levels 4&ndash;9 in <strong>DYNAMIC</strong>, Levels 10&ndash;11 in <strong>STATIC</strong>, and Levels 12&ndash;15 in <strong>SEQ</strong>.</span>
+          <button class="rq-action-btn" onclick="jumpToQuestionDemo('web-Google', 5)">Inspect on web-Google &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="rq-card">
+        <div class="rq-question-header">
+          <span class="rq-num">Question 2</span>
+          <div class="rq-question-text">Does adaptive switching improve end-to-end traversal time?</div>
+          <span class="rq-verdict verdict-yes">Yes &bull; Confirmed</span>
+        </div>
+        <div class="rq-answer-body">
+          <strong>Finding:</strong> Dynamic switching avoids the worst-case penalties of fixed baselines. On high-diameter planar graphs (<code>roadNet-CA</code>), Adaptive executes 551 of 555 levels on CPU, avoiding multi-second GPU kernel launch overhead and achieving <strong>1,277.51 ms vs Pure-Static's 2,771.70 ms (53.9% speedup)</strong>. On power-law web graphs, Adaptive outperforms Pure-Dynamic by <strong>9.0%</strong>.
+        </div>
+        <div class="rq-telemetry-box">
+          <span><strong>Benchmark Evidence:</strong> Table 3 formal acceptance pass across all evaluation graphs; median time meets <code>T_adaptive &le; 1.05 &times; min(T_static, T_dynamic)</code>.</span>
+          <button class="rq-action-btn" onclick="jumpToQuestionDemo('roadNet-CA', 0)">Inspect on roadNet-CA &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="rq-card">
+        <div class="rq-question-header">
+          <span class="rq-num">Question 3</span>
+          <div class="rq-question-text">Can frontier topology explain the selected strategy?</div>
+          <span class="rq-verdict verdict-yes">Yes &bull; Confirmed</span>
+        </div>
+        <div class="rq-answer-body">
+          <strong>Finding:</strong> Two lightweight topological metrics&mdash;frontier vertex count <code>|F_l|</code> and degree coefficient of variation <code>CV = &sigma; / &mu;</code>&mdash;reliably predict the optimal execution engine with zero runtime profiling. <code>CV &gt; 1.5</code> signals high-degree hub imbalance requiring Chase-Lev work-stealing; low CV enables deterministic edge-balanced splits.
+        </div>
+        <div class="rq-telemetry-box">
+          <span><strong>Algorithm 1 Rule:</strong> Size &lt; T_min (1024) &rarr; SEQ; Skew CV &le; 1.5 or size &le; 8192 &rarr; STATIC; Skew CV &gt; 1.5 &rarr; DYNAMIC.</span>
+          <button class="rq-action-btn" onclick="toggleRQModal()">View HUD Decision Box &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="rq-card">
+        <div class="rq-question-header">
+          <span class="rq-num">Question 4</span>
+          <div class="rq-question-text">How close is the model to the measured per-level oracle?</div>
+          <span class="rq-verdict verdict-close">Within 1.2% &ndash; 4.8%</span>
+        </div>
+        <div class="rq-answer-body">
+          <strong>Finding:</strong> Adaptive traversal closely tracks the empirical upper bound measured by <code>Oracle-Replay</code> (an empirical oracle that selects the retrospective fastest measured policy for every single BFS level). The online classifier evaluates Algorithm 1 in under <strong>1.5 &mu;s</strong> per level, capturing near-optimal performance without profiling overhead.
+        </div>
+        <div class="rq-telemetry-box">
+          <span><strong>Evaluation Result:</strong> Relative distance to Oracle-Replay: <code>roadNet-CA</code> +1.8%, <code>web-Google</code> +4.8%, <code>com-lj</code> +1.2%.</span>
+          <button class="rq-action-btn" onclick="toggleRQModal()">Inspect Level Latency &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="rq-card">
+        <div class="rq-question-header">
+          <span class="rq-num">Question 5</span>
+          <div class="rq-question-text">Does behaviour generalise across graph types?</div>
+          <span class="rq-verdict verdict-yes">Yes &bull; Confirmed</span>
+        </div>
+        <div class="rq-answer-body">
+          <strong>Finding:</strong> Frozen calibration parameters (<code>T_min=1024, T_CV=1.5, T_par=8192, &alpha;=0.1526</code>) calibrated strictly on 4 calibration graphs generalized across 4 completely distinct real graph families (planar road networks, scale-free web crawls, heavy-hub social networks, and synthetic R-MAT Kronecker graphs) without per-graph parameter retuning.
+        </div>
+        <div class="rq-telemetry-box">
+          <span><strong>Multi-Topology Replay:</strong> Toggle the top graph selector dropdown between roadNet-CA, web-Google, com-lj, and rmat10_seed1.</span>
+          <button class="rq-action-btn" onclick="jumpToQuestionDemo('com-lj', 4)">Inspect on com-lj Social Graph &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 """
