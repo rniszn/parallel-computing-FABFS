@@ -10,6 +10,14 @@
 1. **Open the Demo:**
    - In any web browser, open the self-contained visualizer: [`demo/fabfs_demo.html`](file:///c:/Users/rohan/Desktop/SEM%205/parallel-computing-FABFS/demo/fabfs_demo.html).
    - Point out that this is **not a mock-up**: it directly replays the exact per-level telemetry rows produced by the M7 CSV logger (`results/levels.csv`).
+   - Click the prominent **`? Research Questions (5/5)`** button in the header:
+     - Open the interactive modal to introduce the **5 core project hypotheses**:
+       1. *Does the best strategy change across BFS levels?* (Q1)
+       2. *Does adaptive switching improve end-to-end traversal time?* (Q2)
+       3. *Can frontier topology explain the selected strategy?* (Q3)
+       4. *How close is the model to the measured per-level oracle?* (Q4)
+       5. *Does behaviour generalise across graph types?* (Q5)
+     - Note that each card has an interactive jump button that instantly scrubs the visualizer to that specific live empirical proof!
    - Mention the graph selector dropdown in the header, supporting **4 distinct graph topologies**:
      - **`rmat10_seed1`** (1,024 nodes): 2D concentric ring layout showing individual node activations and frontier pulses. Verified by SHA256 (`f08f5230...`).
      - **`web-Google`** (875,713 nodes, run `run_062`): Real web crawl displaying full phase transitions (**`SEQ` $\rightarrow$ `STATIC` $\rightarrow$ `DYNAMIC` $\rightarrow$ `STATIC` $\rightarrow$ `SEQ`**).
