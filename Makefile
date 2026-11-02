@@ -42,7 +42,11 @@ bin/bench_runner: tools/bench_runner.cpp $(COMMON_SRC) $(CPU_SRC) $(GPU_SRC) $(S
 	mkdir -p bin
 	$(NVCC) $(NVCCFLAGS) $(DEFINES) tools/bench_runner.cpp $(COMMON_SRC) $(CPU_SRC) $(GPU_SRC) $(SCHED_SRC) $(MODEL_SRC) $(LOG_SRC) $(BENCH_SRC) src/graph/csr.cpp src/graph/loader.cpp $(REF_SRC) -o $@
 
+bin/compare_runner: tools/compare_runner.cu $(COMMON_SRC) $(CPU_SRC) $(GPU_SRC) $(SCHED_SRC) $(MODEL_SRC) $(LOG_SRC) $(BENCH_SRC) $(GRAPH_SRC) $(REF_SRC)
+	mkdir -p bin
+	$(NVCC) $(NVCCFLAGS) $(DEFINES) tools/compare_runner.cu $(COMMON_SRC) $(CPU_SRC) $(GPU_SRC) $(SCHED_SRC) $(MODEL_SRC) $(LOG_SRC) $(BENCH_SRC) $(GRAPH_SRC) $(REF_SRC) -o $@
+
 clean:
-	rm -f tests/test_log tests/test_model tests/test_sched tests/test_deque tests/test_deque_tsan tests/test_sched_debug bin/calibrate_bench tests/test_bench bin/bench_runner
+	rm -f tests/test_log tests/test_model tests/test_sched tests/test_deque tests/test_deque_tsan tests/test_sched_debug bin/calibrate_bench tests/test_bench bin/bench_runner bin/compare_runner
 
 .PHONY: all clean
