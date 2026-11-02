@@ -14,5 +14,6 @@ tests/fixtures/dry_run_test/
 tests/fixtures/test_env/
 tests/fixtures/test_resume/
 results/small_test_*
+results/compare/
 __pycache__/
 *.pyc
