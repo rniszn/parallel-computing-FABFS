@@ -68,9 +68,10 @@
    - **Quality Gate 1 (Baseline Correctness & Calibration): PASSED (100% Correct)**
      - 100% distance verification against M2 reference BFS across all thread counts ($T \in \{1,2,4,8\}$) and graphs (`results/gate1.txt`).
      - Thresholds frozen in `config/thresholds.json` before evaluation began; zero calibration data contamination.
-   - **Quality Gate 4 (Matrix Evaluation & Acceptance): PARTIAL / PENDING FULL RUN**
-     - What Passed: `roadNet-CA` achieved **$-53.91\%$** traversal time vs Pure-Static ($1,277.51~\text{ms}$ vs $2,771.70~\text{ms}$), easily satisfying $T_{\text{adaptive}} \le 1.05 \times \min(T_{\text{static}}, T_{\text{dynamic}})$. All completed levels have `correct = true`.
-     - Pending: Full 480-run matrix execution is ongoing; `com-lj` recorded $+1160.26\%$ diff due to uncoalesced atomic CAS contention on Unified Memory under high concurrency; remaining matrix cells pending completion on dedicated Ubuntu runner.
+   - **Quality Gate 4 (Matrix Evaluation & Acceptance): NOT EVALUATED / PENDING FULL RUN**
+     - Protocol: 480 target runs (4 policies x 8 evaluation graphs x 15 rounds).
+     - Status: 25 of 480 runs recorded in current repository state. Because comparison baseline runs (such as Pure-Dynamic on `roadNet-CA`) are incomplete, pass/fail is NOT EVALUATED. All completed levels maintain `correct = true`.
+     - Full matrix execution is pending on a clean native Ubuntu machine.
 
 ---
 
@@ -79,10 +80,10 @@
    - Present [`presentation/figures/fig1_median_times.png`](file:///c:/Users/rohan/Desktop/SEM%205/parallel-computing-FABFS/presentation/figures/fig1_median_times.png) (or Slide 6 of [`presentation/FABFS.pptx`](file:///c:/Users/rohan/Desktop/SEM%205/parallel-computing-FABFS/presentation/FABFS.pptx)).
 2. **Key Explanations for Evaluator:**
    - Shows the median total execution time across the 4 policies: **Adaptive** (blue #38bdf8), **Pure-Static** (green #4ade80), **Pure-Dynamic** (orange #fb923c), and **Oracle-Replay** (purple).
-   - Whiskers display the 95% bootstrap confidence intervals (1,000 resamples, fixed seed `12345`).
-   - Point out that **Adaptive consistently tracks or outperforms the best fixed policy**:
-     - On planar road networks (`roadNet-CA`), Adaptive achieves $1,277.51~\text{ms}$, avoiding the multi-second GPU sync penalties of Pure-Static ($2,771.70~\text{ms}$).
-     - On power-law graphs (`web-Google`), Adaptive achieves $1,593.36~\text{ms}$, outperforming Pure-Dynamic ($1,751.72~\text{ms}$).
+   - Whiskers display the 95% bootstrap confidence intervals (cells with $n=1$ show "n=1, no CI").
+   - Point out available recorded medians:
+     - On planar road networks (`roadNet-CA`), Adaptive achieves $1,277.51~\text{ms}$ ($n=1$), while Pure-Static is $2,771.70~\text{ms}$ ($n=2$).
+     - On power-law graphs (`web-Google`), Adaptive achieves $1,593.36~\text{ms}$ ($n=1$), while Pure-Dynamic is $1,751.72~\text{ms}$ ($n=1$).
 
 ---
 
@@ -92,11 +93,10 @@
 2. **Evaluation Criterion & Verification:**
    - **Criterion:** On every evaluation graph, Adaptive median total time is within 5% of the better of Pure-Static and Pure-Dynamic:
      $$T_{\text{adaptive}} \le 1.05 \times \min(T_{\text{static}}, T_{\text{dynamic}})$$
-   - Point out the **`roadNet-CA`** row:
-     - Adaptive: $1,277.51~\text{ms}$
-     - Best Fixed (Pure-Static): $2,771.70~\text{ms}$
-     - Relative Difference: **$-53.91\%$** $\rightarrow$ **PASS**!
-   - Emphasize that **all numbers are automatically produced** from `results/levels.csv` by `analysis/stats.py` with zero manual intervention or hand-tuned values.
+   - Point out that **Pass/fail is not yet evaluated: the full 480-run matrix is pending**:
+     - On `roadNet-CA`: Pure-Dynamic has no recorded run in the partial matrix, so the 5% rule cannot yet be evaluated. Table 3 strictly marks it as **`NOT EVALUATED`** (never false PASS).
+     - On `web-Google`, `com-lj`, and R-MAT graphs: missing baseline cells also produce **`NOT EVALUATED`**.
+   - Emphasize that **all numbers and statuses are automatically produced** from `results/levels.csv` by `analysis/stats.py` with zero manual intervention or hand-tuned values.
 
 ---
 
