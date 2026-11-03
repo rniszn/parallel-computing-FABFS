@@ -342,9 +342,9 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
          "• What Passed: 100% correctness verified (correct=true) against M2 reference BFS across all thread counts T in {1,2,4,8}.\n"
          "• Calibrated thresholds frozen in config/thresholds.json (commit: 8dd8ad73): T_min=1024, T_CV=1.5, T_par=8192, alpha=0.1526.\n"
          "• Zero calibration leakage into evaluation matrix."),
-        ("GATE 4: Full Matrix Acceptance Rule", "NOT EVALUATED / PENDING", COLOR_PENDING,
+        ("GATE 4: Full Matrix Acceptance Rule", "NOT EVALUATED / INCOMPLETE", COLOR_PENDING,
          "• What Passed: Completed level records maintain correct=true verification.\n"
-         "• What Did Not Pass / Pending: Pass/fail not yet evaluated: the full 480-run matrix is pending. Because comparison baselines (e.g. Pure-Dynamic on roadNet-CA) are incomplete in the 25 recorded runs, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED.")
+         "• What Did Not Pass / Pending: Pass/fail not yet evaluated: the full 480-run matrix is pending. Because comparison baselines (e.g. Pure-Dynamic on roadNet-CA) are incomplete in the 25 recorded runs, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED (overall status: INCOMPLETE).")
     ]
     for title, status, stat_col, details in gate_items:
         p = tf_r.add_paragraph()
@@ -476,12 +476,12 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
         ("The Strict 5% Acceptance Rule:",
          "Criterion: On every evaluation graph, the adaptive median total time must be within 5% of the better of Pure-Static and Pure-Dynamic:\n"
          "T_adaptive <= 1.05 * min(T_static, T_dynamic). Zero hand-tuned overrides allowed."),
-        ("Empirical Findings on Evaluated Topologies (from Table 3):",
-         "• Pass/fail not yet evaluated: the full 480-run matrix is pending.\n"
-         "• Current Matrix Status: 25 of 480 runs recorded in repository state. Because comparison baseline runs (e.g. Pure-Dynamic on roadNet-CA) are incomplete, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED.\n"
-         "• Recorded Baseline Times: Pure-Dynamic achieves 1,413.57 ms (rmat_a0.25) and 2,237.69 ms (rmat_a0.55); Pure-Static achieves 1,508.19 ms (com-lj) and 633.11 ms (rmat_a0.55). Full comparative evaluation will run on clean native Linux."),
+        ("Partial recorded times (single run, NOT EVALUATED):",
+         "• Pass/fail not yet evaluated: the full 480-run matrix is pending (overall status: INCOMPLETE).\n"
+         "• Current Matrix Status: 25 of 480 runs recorded in repository state. Because comparison baseline policies are incomplete across all evaluation topologies, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED.\n"
+         "• Partial Recorded Times (single run, no CI): Pure-Dynamic recorded 1,413.57 ms (rmat_a0.25, single run, no CI) and 2,237.69 ms (rmat_a0.55, single run, no CI); Pure-Static recorded 1,508.19 ms (com-lj, single run, no CI) and 633.11 ms (rmat_a0.55, single run, no CI). These partial values are preliminary execution logs and do not constitute comparative performance results. Full comparative evaluation is pending the complete matrix run."),
         ("Deterministic Gate Verification Logic:",
-         "Pass/fail logic is codified in analysis/stats.py and automatically checked via tests/test_analysis.py. Scripts exit non-zero unless every evaluation graph is PASS.")
+         "Pass/fail logic is codified in analysis/stats.py and automatically checked via tests/test_analysis.py. Scripts exit non-zero (code 1, INCOMPLETE/FAIL) unless every evaluation graph is PASS.")
     ]
     for idx, (h, desc) in enumerate(pf_info):
         p = tf.add_paragraph() if idx > 0 else tf.paragraphs[0]
@@ -517,7 +517,7 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
         ("Live Demonstration & Visual Presentation (M10):",
          "Interactive visualizer (demo/fabfs_demo.html), complete 16:9 presentation deck (presentation/FABFS.pptx), and presenter walk-through guide (presentation/WALKTHROUGH.md)."),
         ("Quality Gate Status:",
-         "Gate 1 (correctness & frozen thresholds) passed. Gate 4 (complete data) is pending the full matrix run.")
+         "Gate 1 (correctness & frozen thresholds) passed. Gate 4 (acceptance rule across full 480 runs) is pending the complete matrix run (status: INCOMPLETE).")
     ]
     for idx, (h, desc) in enumerate(summary_items):
         p = tf.add_paragraph() if idx > 0 else tf.paragraphs[0]

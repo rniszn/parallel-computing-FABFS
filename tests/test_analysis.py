@@ -29,6 +29,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from load import (
     CONTRACT_COLUMNS,
+    EVALUATION_GRAPHS,
     check_header,
     load_runs_jsonl,
     check_input_hashes,
@@ -36,10 +37,12 @@ from load import (
 )
 from stats import (
     bootstrap_ci_median,
-    run_pass_fail_check
+    run_pass_fail_check,
+    compute_overall_status
 )
 from tables import (
-    generate_table2_policy_times
+    generate_table2_policy_times,
+    generate_table3_pass_fail
 )
 from figures import (
     plot_fig1_median_times,
@@ -219,7 +222,58 @@ class TestAnalysisPipeline(unittest.TestCase):
         res = subprocess.run([sys.executable, stats_script], capture_output=True, text=True)
         self.assertNotEqual(res.returncode, 0, "stats.py must exit non-zero when evaluation graphs are NOT EVALUATED or FAIL")
         self.assertIn("NOT EVALUATED", res.stdout)
-        self.assertIn("OVERALL STATUS: FAIL", res.stdout)
+        self.assertIn("OVERALL STATUS: INCOMPLETE", res.stdout)
+
+    def test_fixture_graph_excluded_from_evaluation(self):
+        """Test: A fixture graph outside the 8 evaluation graphs does not appear in table3 and does not change overall status."""
+        # DataFrame with an evaluation graph + fixture graph rmat10_seed1
+        df_with_fixture = pd.DataFrame([
+            {"graph": "roadNet-CA", "policy": "Adaptive", "median_ms": 100.0, "ci_lower_ms": 95.0, "ci_upper_ms": 105.0, "n_runs": 15},
+            {"graph": "roadNet-CA", "policy": "Pure-Static", "median_ms": 100.0, "ci_lower_ms": 95.0, "ci_upper_ms": 105.0, "n_runs": 15},
+            {"graph": "roadNet-CA", "policy": "Pure-Dynamic", "median_ms": 100.0, "ci_lower_ms": 95.0, "ci_upper_ms": 105.0, "n_runs": 15},
+            {"graph": "rmat10_seed1", "policy": "Adaptive", "median_ms": 0.5, "ci_lower_ms": 0.4, "ci_upper_ms": 0.6, "n_runs": 1},
+            {"graph": "extra_fixture", "policy": "Adaptive", "median_ms": 0.5, "ci_lower_ms": 0.4, "ci_upper_ms": 0.6, "n_runs": 1},
+        ])
+
+        status, pf_df = run_pass_fail_check(df_with_fixture)
+        self.assertNotIn("rmat10_seed1", pf_df["graph"].values)
+        self.assertNotIn("extra_fixture", pf_df["graph"].values)
+        for g in pf_df["graph"].values:
+            self.assertIn(g, EVALUATION_GRAPHS)
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            t3 = generate_table3_pass_fail(pf_df, out_dir=tmp_dir)
+            self.assertNotIn("rmat10_seed1", t3["Graph"].values)
+            self.assertNotIn("extra_fixture", t3["Graph"].values)
+
+    def test_three_status_outcomes(self):
+        """Test: Verify all three overall status outcomes: INCOMPLETE, FAIL, PASS."""
+        # 1. INCOMPLETE: at least one evaluation graph is NOT EVALUATED
+        incomplete_df = pd.DataFrame([
+            {"graph": "g1", "status": "PASS"},
+            {"graph": "g2", "status": "NOT EVALUATED"},
+        ])
+        status_inc = compute_overall_status(incomplete_df)
+        self.assertEqual(status_inc, "INCOMPLETE")
+        self.assertFalse(status_inc)
+
+        # 2. FAIL: every graph is evaluated, but at least one FAILs
+        fail_df = pd.DataFrame([
+            {"graph": "g1", "status": "PASS"},
+            {"graph": "g2", "status": "FAIL"},
+        ])
+        status_fail = compute_overall_status(fail_df)
+        self.assertEqual(status_fail, "FAIL")
+        self.assertFalse(status_fail)
+
+        # 3. PASS: every graph is evaluated and all PASS
+        pass_df = pd.DataFrame([
+            {"graph": "g1", "status": "PASS"},
+            {"graph": "g2", "status": "PASS"},
+        ])
+        status_pass = compute_overall_status(pass_df)
+        self.assertEqual(status_pass, "PASS")
+        self.assertTrue(status_pass)
 
     def test_figure_regeneration_consistency(self):
         """Regenerating a figure from identical data produces exact duplicate data output."""

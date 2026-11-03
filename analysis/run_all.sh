@@ -47,7 +47,7 @@ echo "--------------------------------------------------------" | tee -a "$LOG_F
 if [ "$stats_exit" -eq 0 ]; then
     echo "=== FABFS M9 Pipeline Completed Successfully (Pass/Fail: PASS) ===" | tee -a "$LOG_FILE"
 else
-    echo "=== FABFS M9 Pipeline Completed (Pass/Fail: FAILED or Incomplete Matrix, exit code: $stats_exit) ===" | tee -a "$LOG_FILE"
+    echo "=== FABFS M9 Pipeline Completed (Pass/Fail: INCOMPLETE/FAIL, exit code: $stats_exit) ===" | tee -a "$LOG_FILE"
 fi
 echo "Analysis Log written to: $LOG_FILE" | tee -a "$LOG_FILE"
 

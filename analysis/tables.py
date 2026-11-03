@@ -10,7 +10,7 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from load import load_and_validate
+from load import load_and_validate, EVALUATION_GRAPHS
 from stats import compute_run_total_times, compute_policy_graph_stats, run_pass_fail_check
 
 
@@ -25,11 +25,7 @@ def generate_table1_graph_properties(graphs_csv_path="results/graphs.csv", out_d
     gdf = pd.read_csv(graphs_csv_path)
 
     # Filter for evaluation graphs if present, or format all
-    eval_graphs = [
-        "roadNet-CA", "web-Google", "com-lj", "com-orkut",
-        "rmat_a0.25", "rmat_a0.45", "rmat_a0.55", "rmat_a0.65"
-    ]
-    sub = gdf[gdf["graph"].isin(eval_graphs)].copy()
+    sub = gdf[gdf["graph"].isin(EVALUATION_GRAPHS)].copy()
     if sub.empty:
         sub = gdf.copy()
 
@@ -71,7 +67,10 @@ def generate_table2_policy_times(stats_df, out_dir="results/tables"):
     Rounds displayed interval to 2 decimal places, and prints n next to every median.
     For n = 1 round, prints "n=1, no CI" in place of degenerate interval [x, x].
     """
-    graphs = sorted(stats_df["graph"].unique())
+    if any(g in EVALUATION_GRAPHS for g in stats_df["graph"].unique()):
+        graphs = [g for g in EVALUATION_GRAPHS if g in stats_df["graph"].unique()]
+    else:
+        graphs = sorted(stats_df["graph"].unique())
     policies = ["Adaptive", "Pure-Static", "Pure-Dynamic", "Oracle-Replay"]
 
     rows = []
@@ -120,7 +119,13 @@ def generate_table3_pass_fail(pf_df, out_dir="results/tables"):
     """
     Table 3: Pass/fail results per graph.
     If required policies are missing or incomplete, Result is "NOT EVALUATED".
+    Restricted strictly to the 8 evaluation graphs.
     """
+    if "graph" in pf_df.columns:
+        eval_pf = pf_df[pf_df["graph"].isin(EVALUATION_GRAPHS)]
+        if not eval_pf.empty:
+            pf_df = eval_pf
+
     table3 = pd.DataFrame({
         "Graph": pf_df["graph"],
         "Adaptive (ms)": pf_df["adaptive_ms"].apply(lambda x: f"{x:.2f}" if pd.notnull(x) else "N/A"),
@@ -155,6 +160,9 @@ def generate_table4_run_counts(run_totals, out_dir="results/tables"):
     """
     Table 4: Completed run counts per cell (Policy x Graph) to verify matrix completeness.
     """
+    if any(g in EVALUATION_GRAPHS for g in run_totals["graph"].unique()):
+        run_totals = run_totals[run_totals["graph"].isin(EVALUATION_GRAPHS)].copy()
+
     counts = run_totals.groupby(["graph", "policy"]).size().unstack(fill_value=0)
     counts.reset_index(inplace=True)
     counts.rename(columns={"graph": "Graph"}, inplace=True)

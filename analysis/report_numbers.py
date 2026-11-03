@@ -11,7 +11,7 @@ import sys
 import json
 import numpy as np
 import pandas as pd
-from load import load_and_validate
+from load import load_and_validate, EVALUATION_GRAPHS
 from stats import compute_run_total_times, compute_policy_graph_stats, run_pass_fail_check
 
 
@@ -65,7 +65,11 @@ def main():
     run_totals = compute_run_total_times(df)
     stats_df = compute_policy_graph_stats(run_totals, seed=12345)
 
-    for g in sorted(stats_df["graph"].unique()):
+    eval_graphs_in_stats = [g for g in EVALUATION_GRAPHS if g in stats_df["graph"].unique()]
+    if not eval_graphs_in_stats:
+        eval_graphs_in_stats = sorted(stats_df["graph"].unique())
+
+    for g in eval_graphs_in_stats:
         print(f"\n--- Graph: {g} ---")
         gdf = stats_df[stats_df["graph"] == g].set_index("policy")
 
@@ -113,14 +117,14 @@ def main():
 
     # 4. Pass/Fail Decision Criteria
     print("\n[SECTION 4: ADAPTIVE PASS/FAIL CRITERIA (WITHIN 5% OF BEST FIXED)]")
-    overall_pass, pf_df = run_pass_fail_check(stats_df)
+    overall_status, pf_df = run_pass_fail_check(stats_df)
     for _, row in pf_df.iterrows():
         g = row["graph"]
         diff_str = f"{row['diff_pct']:+.2f}%" if pd.notnull(row['diff_pct']) else "N/A"
         res_str = row["status"]
         print_provenance_number(f"{g} Pass/Fail Status", res_str, "", "results/tables/table3_pass_fail.csv", "status", f"Diff from best fixed: {diff_str}")
 
-    print_provenance_number("Overall Evaluation Matrix Result", "PASS" if overall_pass else "FAIL", "", "stats.py", "run_pass_fail_check")
+    print_provenance_number("Overall Evaluation Matrix Result", str(overall_status), "", "stats.py", "run_pass_fail_check")
 
     # 5. Telemetry & Overheads
     print("\n[SECTION 5: SYSTEM TELEMETRY & OVERHEAD METRICS]")

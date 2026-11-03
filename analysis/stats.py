@@ -8,7 +8,37 @@ Evaluates the adaptive pass/fail criterion (within 5% of the better of Pure-Stat
 import sys
 import numpy as np
 import pandas as pd
-from load import load_and_validate
+from load import load_and_validate, EVALUATION_GRAPHS
+
+
+class EvaluationStatus(str):
+    """String subclass representing overall matrix evaluation status (PASS, FAIL, INCOMPLETE)."""
+    def __bool__(self):
+        return self == "PASS"
+
+
+def compute_overall_status(pf_df):
+    """
+    Compute overall evaluation status from pass/fail DataFrame:
+    - If any evaluation graph is NOT EVALUATED (missing policy runs), overall = INCOMPLETE.
+    - If every evaluation graph is evaluated and at least one FAILs, overall = FAIL.
+    - If every evaluation graph is evaluated and all PASS, overall = PASS.
+    """
+    if pf_df.empty:
+        return EvaluationStatus("INCOMPLETE")
+
+    n_not_eval = int((pf_df["status"] == "NOT EVALUATED").sum())
+    n_fail = int((pf_df["status"] == "FAIL").sum())
+    n_pass = int((pf_df["status"] == "PASS").sum())
+
+    if n_not_eval > 0:
+        return EvaluationStatus("INCOMPLETE")
+    elif n_fail > 0:
+        return EvaluationStatus("FAIL")
+    elif n_pass > 0:
+        return EvaluationStatus("PASS")
+    else:
+        return EvaluationStatus("INCOMPLETE")
 
 
 def bootstrap_ci_median(data, num_resamples=2000, ci=95.0, seed=12345):
@@ -74,23 +104,50 @@ def compute_policy_graph_stats(run_totals, seed=12345):
     return pd.DataFrame(records)
 
 
-def run_pass_fail_check(stats_df, threshold_ratio=1.05):
+def run_pass_fail_check(stats_df, threshold_ratio=1.05, eval_graphs=None):
     """
     Check the adaptive policy pass/fail criterion:
     On every evaluation graph, adaptive median total time is within 5% of
     the better of Pure-Static and Pure-Dynamic (median_adaptive <= 1.05 * min(median_static, median_dynamic)).
 
     Rules:
+    - Only evaluation graphs are considered; any fixture graph (e.g. rmat10_seed1) is ignored.
     - For each graph, if any of the required policies (Adaptive, Pure-Static, Pure-Dynamic)
       has no complete runs, or the comparison needs a missing policy, the result is
       "NOT EVALUATED". It is never PASS or FAIL.
-    - The overall result is FAIL if any graph is FAIL or NOT EVALUATED.
-    Returns (overall_passed, results_df).
+    - Status rules:
+      - If any evaluation graph is NOT EVALUATED (missing policy runs) -> overall = INCOMPLETE.
+      - If every evaluation graph is evaluated and at least one FAILs -> overall = FAIL.
+      - If every evaluation graph is evaluated and all PASS -> overall = PASS.
+    Returns (overall_status, results_df).
     """
-    results = []
+    if eval_graphs is None:
+        graphs_in_df = set(stats_df["graph"].unique()) if not stats_df.empty else set()
+        # If any evaluation graph or known fixture is present, evaluate strictly the 8 evaluation graphs
+        if graphs_in_df.intersection(EVALUATION_GRAPHS) or any("rmat10" in g for g in graphs_in_df):
+            graphs_to_eval = EVALUATION_GRAPHS
+        else:
+            graphs_to_eval = sorted(graphs_in_df)
+    else:
+        graphs_to_eval = eval_graphs
 
-    graphs = sorted(stats_df["graph"].unique())
-    for g in graphs:
+    results = []
+    for g in graphs_to_eval:
+        if stats_df.empty or g not in stats_df["graph"].values:
+            results.append({
+                "graph": g,
+                "adaptive_ms": np.nan,
+                "static_ms": np.nan,
+                "dynamic_ms": np.nan,
+                "best_fixed_ms": np.nan,
+                "ratio_to_best": np.nan,
+                "diff_pct": np.nan,
+                "passed": False,
+                "status": "NOT EVALUATED",
+                "note": "NOT EVALUATED"
+            })
+            continue
+
         gdf = stats_df[stats_df["graph"] == g].set_index("policy")
 
         has_adaptive = "Adaptive" in gdf.index and pd.notnull(gdf.loc["Adaptive", "median_ms"]) and gdf.loc["Adaptive", "n_runs"] > 0
@@ -152,14 +209,9 @@ def run_pass_fail_check(stats_df, threshold_ratio=1.05):
         })
 
     pf_df = pd.DataFrame(results)
-    n_pass = int((pf_df["status"] == "PASS").sum()) if not pf_df.empty else 0
-    n_fail = int((pf_df["status"] == "FAIL").sum()) if not pf_df.empty else 0
-    n_not_eval = int((pf_df["status"] == "NOT EVALUATED").sum()) if not pf_df.empty else 0
+    overall_status = compute_overall_status(pf_df)
 
-    # Overall result is FAIL if any graph is FAIL or NOT EVALUATED
-    overall_pass = (n_fail == 0 and n_not_eval == 0 and n_pass > 0)
-
-    return overall_pass, pf_df
+    return overall_status, pf_df
 
 
 def main():
@@ -170,7 +222,11 @@ def main():
     print("\n" + "="*70)
     print("FABFS Policy Total Time Statistics (Median and 95% Bootstrap CI)")
     print("="*70)
-    for g in sorted(stats_df["graph"].unique()):
+    display_graphs = [g for g in EVALUATION_GRAPHS if g in stats_df["graph"].unique()]
+    if not display_graphs:
+        display_graphs = sorted(stats_df["graph"].unique())
+
+    for g in display_graphs:
         print(f"\nGraph: {g}")
         sub = stats_df[stats_df["graph"] == g]
         for _, row in sub.iterrows():
@@ -185,7 +241,7 @@ def main():
     print("\n" + "="*70)
     print("Pass/Fail Evaluation Check: Adaptive <= 1.05 * min(Static, Dynamic)")
     print("="*70)
-    overall_pass, pf_df = run_pass_fail_check(stats_df)
+    overall_status, pf_df = run_pass_fail_check(stats_df)
     for _, row in pf_df.iterrows():
         status = row["status"]
         adapt_str = f"{row['adaptive_ms']:>8.2f}" if pd.notnull(row['adaptive_ms']) else "     N/A"
@@ -199,11 +255,11 @@ def main():
 
     print("\n" + "="*70)
     print(f"Summary: {n_pass} PASS, {n_fail} FAIL, {n_not_eval} NOT EVALUATED")
-    print(f"OVERALL STATUS: {'PASS' if overall_pass else 'FAIL'}")
+    print(f"OVERALL STATUS: {overall_status}")
     print("="*70)
 
-    if not overall_pass:
-        print(f"[stats.py] Evaluation check failed ({n_fail} FAIL, {n_not_eval} NOT EVALUATED).", file=sys.stderr)
+    if overall_status != "PASS":
+        print(f"[stats.py] Evaluation check not passed (status: {overall_status}, {n_fail} FAIL, {n_not_eval} NOT EVALUATED).", file=sys.stderr)
         sys.exit(1)
 
 

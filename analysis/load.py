@@ -10,6 +10,17 @@ import sys
 import json
 import pandas as pd
 
+EVALUATION_GRAPHS = [
+    "roadNet-CA",
+    "web-Google",
+    "com-lj",
+    "com-orkut",
+    "rmat_a0.25",
+    "rmat_a0.45",
+    "rmat_a0.55",
+    "rmat_a0.65"
+]
+
 CONTRACT_COLUMNS = [
     "run_id",
     "graph",
