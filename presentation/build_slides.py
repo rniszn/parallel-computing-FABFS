@@ -35,6 +35,7 @@ COLOR_MUTED = RGBColor(100, 116, 139)    # Slate 500
 COLOR_PRIMARY = RGBColor(2, 132, 199)    # Blue 600
 COLOR_PASS = RGBColor(22, 163, 74)       # Green 600
 COLOR_FAIL = RGBColor(225, 29, 72)       # Red 600
+COLOR_PENDING = RGBColor(234, 88, 12)    # Orange 600
 
 
 def get_git_commit():
@@ -78,7 +79,6 @@ def add_slide_header(slide, title_text, category="FABFS | IT-301 PARALLEL COMPUT
     """
     Adds consistent slide header with category and explicit [Planned] or [Measured] tag.
     """
-    # Category and Result Tag
     cat_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.35), Inches(11.7), Inches(0.35))
     tf_c = cat_box.text_frame
     tf_c.word_wrap = True
@@ -91,7 +91,6 @@ def add_slide_header(slide, title_text, category="FABFS | IT-301 PARALLEL COMPUT
     if result_tag:
         p_c.text += f"   •   [{result_tag.upper()}]"
 
-    # Slide Title
     title_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.65), Inches(11.7), Inches(0.75))
     tf_t = title_box.text_frame
     tf_t.word_wrap = True
@@ -109,7 +108,6 @@ def add_slide_footer(slide, slide_num, total_slides=12, footnote_text=None, comm
     if commit_hash is None:
         commit_hash = get_git_commit()
 
-    # Left: Provenance footnote
     if footnote_text:
         fn_box = slide.shapes.add_textbox(Inches(0.8), Inches(6.88), Inches(7.5), Inches(0.35))
         tf = fn_box.text_frame
@@ -120,7 +118,6 @@ def add_slide_footer(slide, slide_num, total_slides=12, footnote_text=None, comm
         p.font.italic = True
         p.font.color.rgb = COLOR_MUTED
 
-    # Right: Git commit and Slide number
     meta_box = slide.shapes.add_textbox(Inches(8.5), Inches(6.88), Inches(4.0), Inches(0.35))
     tf_m = meta_box.text_frame
     tf_m.word_wrap = True
@@ -179,7 +176,7 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
     p_m1.font.color.rgb = RGBColor(30, 41, 59)
 
     p_m2 = tf_m.add_paragraph()
-    p_m2.text = "Target Architecture: NVIDIA GeForce RTX 4050 Laptop GPU (6 GB VRAM, Ada Lovelace sm_89) + 13th Gen Intel Core i5-13420H"
+    p_m2.text = "Target: NVIDIA RTX 4050 Laptop GPU (6 GB VRAM), Ubuntu 22.04 (native Linux required for the full run)"
     p_m2.font.size = Pt(11)
     p_m2.font.color.rgb = COLOR_MUTED
 
@@ -262,20 +259,20 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
     add_slide_footer(s3, 3, total_slides, "Frozen calibrated parameters: config/thresholds.json (commit: 8dd8ad730e2eb6c5bf6e9491eb8401f9c7d792e3)", commit_hash)
 
     # ----------------------------------------------------
-    # SLIDE 4: Evaluator Demo: Real Log Replay
+    # SLIDE 4: Evaluator Demo: Dataset Modes
     # ----------------------------------------------------
     s4 = prs.slides.add_slide(blank_layout)
-    add_slide_header(s4, "Evaluator Demo: Real Log Replay Visualizer", result_tag="Measured")
+    add_slide_header(s4, "Evaluator Demo: Adaptive BFS Visualizer", result_tag="Measured")
 
     b_box = s4.shapes.add_textbox(Inches(0.8), Inches(1.5), Inches(11.7), Inches(5.1))
     tf = b_box.text_frame
     tf.word_wrap = True
 
     demo_bullets = [
-        ("Replay from Real Execution Telemetry (Not a Mock-up):",
-         "The visualizer (demo/fabfs_demo.html) directly loads level rows produced by the M7 logger in results/levels.csv. It refuses to build on any hash or mode mismatch."),
-        ("Multi-Graph Topology Support:",
-         "Includes synthetic R-MAT scale 10 (rmat10_seed1) with 2D concentric layouts, plus real SNAP graph traces: web-Google (phase transitions), com-lj (heavy hub skew), and roadNet-CA (high diameter)."),
+        ("Visualizer Dataset Labels (SYNTHETIC WALKTHROUGH vs REAL TRACE):",
+         "rmat10_seed1 is labeled 'SYNTHETIC WALKTHROUGH' (synthetic 1K-node concentric layout for step-by-step algorithmic inspection). Evaluation graphs (web-Google, com-lj, roadNet-CA) are labeled 'REAL TRACE' (replaying logged execution rows from results/levels.csv)."),
+        ("Multi-Graph Topology Coverage:",
+         "Visualizer supports synthetic R-MAT scale 10 with 2D concentric ring layout, and real SNAP graph traces: web-Google (phase transitions), com-lj (heavy hub skew), and roadNet-CA (high diameter)."),
         ("Live Beside-Graph Telemetry & Controls:",
          "Directly displays frontier size |F_l|, mode chosen, chunk counts (DYNAMIC), and CPU/GPU split times beside the graph. Accessible via clear controls, keyboard shortcuts (Left/Right/Space), and visible step counter 'Level X of Y'."),
         ("Self-Contained & Completely Offline:",
@@ -295,10 +292,10 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
         p_sub.font.color.rgb = RGBColor(71, 85, 105)
         p_sub.space_before = Pt(2)
 
-    add_slide_footer(s4, 4, total_slides, "Verified run: demo_rmat10_run1 (demo/demo_run.csv, demo/demo_graph.bin)", commit_hash)
+    add_slide_footer(s4, 4, total_slides, "Trace sources: demo/demo_run.csv and results/levels.csv (rmat10_seed1, web-Google, com-lj, roadNet-CA)", commit_hash)
 
     # ----------------------------------------------------
-    # SLIDE 5: Benchmark Execution Matrix & Quality Gates (First Results Slide)
+    # SLIDE 5: Benchmark Execution Matrix & Quality Gates
     # ----------------------------------------------------
     s5 = prs.slides.add_slide(blank_layout)
     add_slide_header(s5, "Benchmark Matrix & Quality Gate Verification", result_tag="Measured")
@@ -315,17 +312,19 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
     p.font.color.rgb = COLOR_PRIMARY
 
     matrix_bullets = [
-        ("480 Target Runs Matrix:", "4 policies x 8 evaluation graphs x 15 rounds with 2 warm-up runs per cell."),
+        ("480 Target Runs Matrix:", "4 policies x 8 evaluation graphs x 15 rounds."),
+        ("Protocol: 2 unrecorded warm-up runs per cell.", "Eliminates cold-start caching and page-fault artifacts."),
         ("Strict Topology Isolation:", "Calibration graphs (roadNet-PA, com-Amazon, com-DBLP, rmat_s16) strictly isolated from evaluation."),
-        ("8 Evaluation Topologies:", "Planar road (roadNet-CA), web crawl (web-Google), social networks (com-lj, com-orkut), and 4 R-MAT graphs (a in {0.25, 0.45, 0.55, 0.65})."),
+        ("Manifest check required before the full run.", "Validates SHA256 input hashes before matrix execution."),
+        ("Status: 25 of 480 runs complete (partial, dirty tree).", "Full run pending on a clean Ubuntu machine."),
         ("Crash-Recovery Architecture:", "Atomic append-only results/runs.jsonl logging with automatic rerun skip logic.")
     ]
     for h, desc in matrix_bullets:
         p = tf_l.add_paragraph()
         p.text = f"• {h} {desc}"
-        p.font.size = Pt(11)
+        p.font.size = Pt(10.5)
         p.font.color.rgb = RGBColor(51, 65, 85)
-        p.space_before = Pt(6)
+        p.space_before = Pt(5)
 
     # Right Box: Quality Gate 1 & Gate 4 Verification Status
     b_right = s5.shapes.add_textbox(Inches(6.8), Inches(1.5), Inches(5.7), Inches(5.1))
@@ -343,9 +342,9 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
          "• What Passed: 100% correctness verified (correct=true) against M2 reference BFS across all thread counts T in {1,2,4,8}.\n"
          "• Calibrated thresholds frozen in config/thresholds.json (commit: 8dd8ad73): T_min=1024, T_CV=1.5, T_par=8192, alpha=0.1526.\n"
          "• Zero calibration leakage into evaluation matrix."),
-        ("GATE 4: Full Matrix Acceptance Rule", "PARTIAL / PENDING FULL RUN", COLOR_FAIL,
-         "• What Passed: roadNet-CA achieved -53.91% traversal time vs Pure-Static (1,277.51 ms vs 2,771.70 ms), easily satisfying T_adapt <= 1.05 * min(T_static, T_dynamic).\n"
-         "• What Did Not Pass / Pending: 25 of 480 runs executed in current test repository state; com-lj recorded +1160.26% diff due to uncoalesced atomic CAS contention on Unified Memory; remaining cells pending final Ubuntu runner execution.")
+        ("GATE 4: Full Matrix Acceptance Rule", "NOT EVALUATED / INCOMPLETE", COLOR_PENDING,
+         "• What Passed: Completed level records maintain correct=true verification.\n"
+         "• What Did Not Pass / Pending: Pass/fail not yet evaluated: the full 480-run matrix is pending. Because comparison baselines (e.g. Pure-Dynamic on roadNet-CA) are incomplete in the 25 recorded runs, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED (overall status: INCOMPLETE).")
     ]
     for title, status, stat_col, details in gate_items:
         p = tf_r.add_paragraph()
@@ -377,11 +376,10 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
     if os.path.exists(fig1_path):
         s6.shapes.add_picture(fig1_path, Inches(0.8), Inches(1.5), Inches(11.7), Inches(4.7))
 
-    # Caption box
     cap_box = s6.shapes.add_textbox(Inches(0.8), Inches(6.25), Inches(11.7), Inches(0.45))
     tf_cap = cap_box.text_frame
     p_cap = tf_cap.paragraphs[0]
-    p_cap.text = "Figure 1: Median total BFS execution time across policies with 95% bootstrap confidence intervals. Adaptive (blue) tracks or beats best fixed baseline on evaluated graphs (Source: M9 report/figures/fig1_median_times.png, Table 2)."
+    p_cap.text = "Figure 1: Median total BFS execution time across policies with 95% bootstrap confidence intervals. Evaluated across available runs (Source: M9 report/figures/fig1_median_times.png, Table 2)."
     p_cap.font.size = Pt(9.5)
     p_cap.font.bold = True
     p_cap.font.color.rgb = COLOR_DARK
@@ -478,13 +476,12 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
         ("The Strict 5% Acceptance Rule:",
          "Criterion: On every evaluation graph, the adaptive median total time must be within 5% of the better of Pure-Static and Pure-Dynamic:\n"
          "T_adaptive <= 1.05 * min(T_static, T_dynamic). Zero hand-tuned overrides allowed."),
-        ("Empirical Findings on Evaluated Topologies (from Table 3):",
-         "• Road Networks (roadNet-CA): Adaptive achieves 1,277.51 ms vs Pure-Static 2,771.70 ms (53.91% faster, clear PASS).\n"
-         "• Power-Law Web Graph (web-Google): Adaptive achieves 1,593.36 ms vs Pure-Dynamic 1,751.72 ms (9.04% faster).\n"
-         "• Social Network (com-lj): Adaptive achieves 19,007.23 ms vs Pure-Static 1,508.19 ms (FAIL: atomic CAS contention on Unified Memory under high concurrency).\n"
-         "• Synthetic R-MAT Topologies: Pure-Dynamic achieves 1,413.57 ms (a=0.25) and 2,237.69 ms (a=0.55); full adaptive comparison awaiting complete matrix execution."),
+        ("Partial recorded times (single run, NOT EVALUATED):",
+         "• Pass/fail not yet evaluated: the full 480-run matrix is pending (overall status: INCOMPLETE).\n"
+         "• Current Matrix Status: 25 of 480 runs recorded in repository state. Because comparison baseline policies are incomplete across all evaluation topologies, table3_pass_fail.csv marks evaluation graphs as NOT EVALUATED.\n"
+         "• Partial Recorded Times (single run, no CI): Pure-Dynamic recorded 1,413.57 ms (rmat_a0.25, single run, no CI) and 2,237.69 ms (rmat_a0.55, single run, no CI); Pure-Static recorded 1,508.19 ms (com-lj, single run, no CI) and 633.11 ms (rmat_a0.55, single run, no CI). These partial values are preliminary execution logs and do not constitute comparative performance results. Full comparative evaluation is pending the complete matrix run."),
         ("Deterministic Gate Verification Logic:",
-         "Pass/fail logic is codified in analysis/stats.py and automatically checked via tests/test_analysis.py. Scripts exit with non-zero status on threshold violation.")
+         "Pass/fail logic is codified in analysis/stats.py and automatically checked via tests/test_analysis.py. Scripts exit non-zero (code 1, INCOMPLETE/FAIL) unless every evaluation graph is PASS.")
     ]
     for idx, (h, desc) in enumerate(pf_info):
         p = tf.add_paragraph() if idx > 0 else tf.paragraphs[0]
@@ -514,13 +511,13 @@ def build_deck(out_pptx_path="presentation/FABFS.pptx"):
 
     summary_items = [
         ("Core Engineering Modules (M0 - M8):",
-         "Verified CUDA level-synchronous kernel (M4), OpenMP CPU expander (M3), lock-free Chase-Lev deques (M5), cost model & decision engine (M6), 28-column logger (M7), and crash-resilient matrix runner (M8)."),
+         "Implemented CUDA level-synchronous kernel (M4), OpenMP CPU expander (M3), lock-free Chase-Lev deques (M5), cost model & decision engine (M6), 28-column logger (M7), and crash-resilient matrix runner (M8)."),
         ("Reproducible Analysis Suite (M9):",
          "Automated data loader, bootstrap confidence intervals, LaTeX tables, high-resolution figures, and official report provenance numbers generated from raw CSV."),
         ("Live Demonstration & Visual Presentation (M10):",
-         "Interactive replay visualizer (demo/fabfs_demo.html), complete 16:9 presentation deck (presentation/FABFS.pptx), and presenter walk-through guide (presentation/WALKTHROUGH.md)."),
-        ("Git & Verification Integrity:",
-         "Every module developed on dedicated branches with clean PRs; all gates and test suites pass.")
+         "Interactive visualizer (demo/fabfs_demo.html), complete 16:9 presentation deck (presentation/FABFS.pptx), and presenter walk-through guide (presentation/WALKTHROUGH.md)."),
+        ("Quality Gate Status:",
+         "Gate 1 (correctness & frozen thresholds) passed. Gate 4 (acceptance rule across full 480 runs) is pending the complete matrix run (status: INCOMPLETE).")
     ]
     for idx, (h, desc) in enumerate(summary_items):
         p = tf.add_paragraph() if idx > 0 else tf.paragraphs[0]
