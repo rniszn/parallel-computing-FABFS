@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-M9: Report numbers generator.
-Prints every single number quoted in the paper/report with explicit provenance
-(source file and column). The report must quote only numbers from this script.
+M9: Master Provenance Numbers Table Generator.
+Reads raw results from results/levels.csv, results/runs.jsonl, and config/thresholds.json,
+and prints the authoritative numbers quoted across report tables and figures.
+Every quoted number explicitly cites its source column and provenance calculation.
 """
 
 import os
@@ -10,15 +11,16 @@ import sys
 import json
 import numpy as np
 import pandas as pd
-
 from load import load_and_validate
 from stats import compute_run_total_times, compute_policy_graph_stats, run_pass_fail_check
 
 
-def print_provenance_number(name, value, unit, file_source, col_source, note=""):
-    """Format and print an exact metric with clear source provenance."""
-    note_str = f" ({note})" if note else ""
-    print(f"  {name:<36} : {str(value):>14} {unit:<6} [Source: {file_source} | Col: {col_source}]{note_str}")
+def print_provenance_number(label, val_str, unit="", source_file="", source_col="", note=""):
+    unit_str = f" {unit}" if unit else ""
+    src_info = f"[Source: {source_file} | Col: {source_col}]"
+    if note:
+        src_info += f" ({note})"
+    print(f"  {label:<37}: {val_str:>15}{unit_str:<5} {src_info}")
 
 
 def main():
@@ -26,40 +28,39 @@ def main():
     print("FABFS EVALUATION REPORT: OFFICIAL REPRODUCIBLE NUMBERS TABLE")
     print("=" * 100)
 
-    # 1. Environment & Calibration Configuration
+    # 1. Calibrated System Environment
     print("\n[SECTION 1: SYSTEM ENVIRONMENT & CALIBRATED PARAMETERS]")
-    thresholds_path = "config/thresholds.json"
-    with open(thresholds_path, "r", encoding="utf-8") as f:
+    with open("config/thresholds.json", "r", encoding="utf-8") as f:
         thresh = json.load(f)
 
-    print_provenance_number("Calibration Commit Hash", thresh.get("calibration_commit"), "", thresholds_path, "calibration_commit")
-    print_provenance_number("Threshold T_min (Frontier size)", thresh.get("T_min"), "vertices", thresholds_path, "T_min", "Below this, SEQ mode is selected")
-    print_provenance_number("Threshold T_CV (Frontier skew)", thresh.get("T_CV"), "", thresholds_path, "T_CV", "Above this, DYNAMIC mode is selected")
-    print_provenance_number("Threshold T_par (Parallel cutoff)", thresh.get("T_par"), "vertices", thresholds_path, "T_par", "Frontier size cutoff for static split")
-    print_provenance_number("Static GPU Work Ratio (alpha)", thresh.get("alpha"), "", thresholds_path, "alpha", "GPU edge share in STATIC mode")
-    print_provenance_number("CPU Edge Throughput (P_cpu)", thresh.get("P_cpu_edges_per_s"), "edges/s", thresholds_path, "P_cpu_edges_per_s")
-    print_provenance_number("GPU Edge Throughput (P_gpu)", thresh.get("P_gpu_edges_per_s"), "edges/s", thresholds_path, "P_gpu_edges_per_s")
-    print_provenance_number("GPU Kernel Launch Latency (L)", thresh.get("L_launch_us"), "us", thresholds_path, "L_launch_us")
-    print_provenance_number("Steal Latency (C_steal)", thresh.get("C_steal_ns"), "ns", thresholds_path, "C_steal_ns")
-    print_provenance_number("Dynamic Steal Chunk Max (C_max)", thresh.get("C_max"), "vertices", thresholds_path, "C_max")
-    print_provenance_number("Dynamic Steal Chunk Min (C_min)", thresh.get("C_min"), "vertices", thresholds_path, "C_min")
-    print_provenance_number("GPU Minimum Batch Size", thresh.get("GPU_MIN_BATCH"), "vertices", thresholds_path, "GPU_MIN_BATCH")
+    print_provenance_number("Calibration Commit Hash", thresh.get("calibration_commit", "N/A"), "", "config/thresholds.json", "calibration_commit")
+    print_provenance_number("Threshold T_min (Frontier size)", thresh.get("T_min", "N/A"), "vertices", "config/thresholds.json", "T_min", "Below this, SEQ mode is selected")
+    print_provenance_number("Threshold T_CV (Frontier skew)", thresh.get("T_CV", "N/A"), "", "config/thresholds.json", "T_CV", "Above this, DYNAMIC mode is selected")
+    print_provenance_number("Threshold T_par (Parallel cutoff)", thresh.get("T_par", "N/A"), "vertices", "config/thresholds.json", "T_par", "Frontier size cutoff for static split")
+    print_provenance_number("Static GPU Work Ratio (alpha)", thresh.get("alpha", "N/A"), "", "config/thresholds.json", "alpha", "GPU edge share in STATIC mode")
+    print_provenance_number("CPU Edge Throughput (P_cpu)", thresh.get("P_cpu_edges_per_s", "N/A"), "edges/s", "config/thresholds.json", "P_cpu_edges_per_s")
+    print_provenance_number("GPU Edge Throughput (P_gpu)", thresh.get("P_gpu_edges_per_s", "N/A"), "edges/s", "config/thresholds.json", "P_gpu_edges_per_s")
+    print_provenance_number("GPU Kernel Launch Latency (L)", thresh.get("L_launch_us", "N/A"), "us", "config/thresholds.json", "L_launch_us")
+    print_provenance_number("Steal Latency (C_steal)", thresh.get("C_steal_ns", "N/A"), "ns", "config/thresholds.json", "C_steal_ns")
+    print_provenance_number("Dynamic Steal Chunk Max (C_max)", thresh.get("C_max", "N/A"), "vertices", "config/thresholds.json", "C_max")
+    print_provenance_number("Dynamic Steal Chunk Min (C_min)", thresh.get("C_min", "N/A"), "vertices", "config/thresholds.json", "C_min")
+    print_provenance_number("GPU Minimum Batch Size", thresh.get("GPU_MIN_BATCH", "N/A"), "vertices", "config/thresholds.json", "GPU_MIN_BATCH")
 
-    # 2. Dataset Loading & Validation Telemetry
+    # 2. Evaluation Matrix Scale
     print("\n[SECTION 2: MATRIX EXECUTION & DATASET VALIDATION]")
     df, meta = load_and_validate()
     print_provenance_number("Total Level Records", len(df), "rows", "results/levels.csv", "All rows")
-    print_provenance_number("Completed Runs", meta["completed_runs_count"], "runs", "results/runs.jsonl", "status=complete")
-    print_provenance_number("Timed-out Runs", meta["timeout_runs_count"], "runs", "results/runs.jsonl", "status=timeout")
-    print_provenance_number("Evaluation Graphs Count", len(meta["graphs"]), "graphs", "results/levels.csv", "graph")
-    print_provenance_number("Execution Policies Count", len(meta["policies"]), "policies", "results/levels.csv", "policy")
+    print_provenance_number("Completed Runs", meta.get("completed_runs_count", "N/A"), "runs", "results/runs.jsonl", "status=complete")
+    print_provenance_number("Timed-out Runs", meta.get("timeout_runs_count", "N/A"), "runs", "results/runs.jsonl", "status=timeout")
+    print_provenance_number("Evaluation Graphs Count", df["graph"].nunique(), "graphs", "results/levels.csv", "graph")
+    print_provenance_number("Execution Policies Count", df["policy"].nunique(), "policies", "results/levels.csv", "policy")
 
-    git_commit_sample = df["git_commit"].iloc[0] if len(df) > 0 else "unknown"
-    driver_version_sample = df["driver_version"].iloc[0] if len(df) > 0 else "unknown"
-    print_provenance_number("Evaluation Git Commit", git_commit_sample, "", "results/levels.csv", "git_commit")
-    print_provenance_number("NVIDIA CUDA Driver Version", driver_version_sample, "", "results/levels.csv", "driver_version")
+    if "git_commit" in df.columns:
+        print_provenance_number("Evaluation Git Commit", df["git_commit"].iloc[0], "", "results/levels.csv", "git_commit")
+    if "driver_version" in df.columns:
+        print_provenance_number("NVIDIA CUDA Driver Version", df["driver_version"].iloc[0], "", "results/levels.csv", "driver_version")
 
-    # 3. Policy Execution Times & Speedups
+    # 3. Policy Execution Times and Speedups
     print("\n[SECTION 3: POLICY PERFORMANCE & CONFIDENCE INTERVALS]")
     run_totals = compute_run_total_times(df)
     stats_df = compute_policy_graph_stats(run_totals, seed=12345)
@@ -71,23 +72,32 @@ def main():
         med_adapt = gdf.loc["Adaptive", "median_ms"] if "Adaptive" in gdf.index else np.nan
         lo_adapt = gdf.loc["Adaptive", "ci_lower_ms"] if "Adaptive" in gdf.index else np.nan
         hi_adapt = gdf.loc["Adaptive", "ci_upper_ms"] if "Adaptive" in gdf.index else np.nan
+        n_adapt = int(gdf.loc["Adaptive", "n_runs"]) if "Adaptive" in gdf.index else 0
 
         med_static = gdf.loc["Pure-Static", "median_ms"] if "Pure-Static" in gdf.index else np.nan
         lo_static = gdf.loc["Pure-Static", "ci_lower_ms"] if "Pure-Static" in gdf.index else np.nan
         hi_static = gdf.loc["Pure-Static", "ci_upper_ms"] if "Pure-Static" in gdf.index else np.nan
+        n_static = int(gdf.loc["Pure-Static", "n_runs"]) if "Pure-Static" in gdf.index else 0
 
         med_dyn = gdf.loc["Pure-Dynamic", "median_ms"] if "Pure-Dynamic" in gdf.index else np.nan
         lo_dyn = gdf.loc["Pure-Dynamic", "ci_lower_ms"] if "Pure-Dynamic" in gdf.index else np.nan
         hi_dyn = gdf.loc["Pure-Dynamic", "ci_upper_ms"] if "Pure-Dynamic" in gdf.index else np.nan
+        n_dyn = int(gdf.loc["Pure-Dynamic", "n_runs"]) if "Pure-Dynamic" in gdf.index else 0
 
         med_oracle = gdf.loc["Oracle-Replay", "median_ms"] if "Oracle-Replay" in gdf.index else np.nan
         lo_oracle = gdf.loc["Oracle-Replay", "ci_lower_ms"] if "Oracle-Replay" in gdf.index else np.nan
         hi_oracle = gdf.loc["Oracle-Replay", "ci_upper_ms"] if "Oracle-Replay" in gdf.index else np.nan
+        n_oracle = int(gdf.loc["Oracle-Replay", "n_runs"]) if "Oracle-Replay" in gdf.index else 0
 
-        print_provenance_number(f"{g} Adaptive Median", f"{med_adapt:.2f}", "ms", "results/levels.csv", "time_us", f"95% CI: [{lo_adapt:.2f}, {hi_adapt:.2f}]")
-        print_provenance_number(f"{g} Pure-Static Median", f"{med_static:.2f}", "ms", "results/levels.csv", "time_us", f"95% CI: [{lo_static:.2f}, {hi_static:.2f}]")
-        print_provenance_number(f"{g} Pure-Dynamic Median", f"{med_dyn:.2f}", "ms", "results/levels.csv", "time_us", f"95% CI: [{lo_dyn:.2f}, {hi_dyn:.2f}]")
-        print_provenance_number(f"{g} Oracle-Replay Median", f"{med_oracle:.2f}", "ms", "results/levels.csv", "time_us", f"95% CI: [{lo_oracle:.2f}, {hi_oracle:.2f}]")
+        ci_adapt_str = "n=1, no CI" if n_adapt == 1 or np.isnan(lo_adapt) else f"95% CI: [{lo_adapt:.2f}, {hi_adapt:.2f}]"
+        ci_static_str = "n=1, no CI" if n_static == 1 or np.isnan(lo_static) else f"95% CI: [{lo_static:.2f}, {hi_static:.2f}]"
+        ci_dyn_str = "n=1, no CI" if n_dyn == 1 or np.isnan(lo_dyn) else f"95% CI: [{lo_dyn:.2f}, {hi_dyn:.2f}]"
+        ci_oracle_str = "n=1, no CI" if n_oracle == 1 or np.isnan(lo_oracle) else f"95% CI: [{lo_oracle:.2f}, {hi_oracle:.2f}]"
+
+        print_provenance_number(f"{g} Adaptive Median", f"{med_adapt:.2f} (n={n_adapt})", "ms", "results/levels.csv", "time_us", ci_adapt_str)
+        print_provenance_number(f"{g} Pure-Static Median", f"{med_static:.2f} (n={n_static})", "ms", "results/levels.csv", "time_us", ci_static_str)
+        print_provenance_number(f"{g} Pure-Dynamic Median", f"{med_dyn:.2f} (n={n_dyn})", "ms", "results/levels.csv", "time_us", ci_dyn_str)
+        print_provenance_number(f"{g} Oracle-Replay Median", f"{med_oracle:.2f} (n={n_oracle})", "ms", "results/levels.csv", "time_us", ci_oracle_str)
 
         if not np.isnan(med_adapt) and not np.isnan(med_static) and med_adapt > 0:
             sp_static = med_static / med_adapt
@@ -107,8 +117,8 @@ def main():
     for _, row in pf_df.iterrows():
         g = row["graph"]
         diff_str = f"{row['diff_pct']:+.2f}%" if pd.notnull(row['diff_pct']) else "N/A"
-        res_str = "PASS" if row["passed"] else "FAIL"
-        print_provenance_number(f"{g} Pass/Fail Status", res_str, "", "results/tables/table3_pass_fail.csv", "passed", f"Diff from best fixed: {diff_str}")
+        res_str = row["status"]
+        print_provenance_number(f"{g} Pass/Fail Status", res_str, "", "results/tables/table3_pass_fail.csv", "status", f"Diff from best fixed: {diff_str}")
 
     print_provenance_number("Overall Evaluation Matrix Result", "PASS" if overall_pass else "FAIL", "", "stats.py", "run_pass_fail_check")
 

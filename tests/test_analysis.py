@@ -9,6 +9,10 @@ Validates:
 5. Bootstrap confidence interval determinism with fixed seed.
 6. Pass/fail criterion evaluation (positive and deliberately failing cases).
 7. Figure regeneration consistency test (ensures reproducible outputs).
+8. Missing policy gives NOT EVALUATED, not PASS.
+9. Adaptive 4% slower than better fixed gives PASS, 6% slower gives FAIL.
+10. Cell with n = 1 prints "n=1, no CI".
+11. Script exits non-zero if any graph is NOT EVALUATED.
 """
 
 import os
@@ -16,6 +20,7 @@ import sys
 import json
 import tempfile
 import unittest
+import subprocess
 import numpy as np
 import pandas as pd
 
@@ -32,6 +37,9 @@ from load import (
 from stats import (
     bootstrap_ci_median,
     run_pass_fail_check
+)
+from tables import (
+    generate_table2_policy_times
 )
 from figures import (
     plot_fig1_median_times,
@@ -139,6 +147,7 @@ class TestAnalysisPipeline(unittest.TestCase):
         passed, res = run_pass_fail_check(passing_data)
         self.assertTrue(passed)
         self.assertTrue(res.iloc[0]["passed"])
+        self.assertEqual(res.iloc[0]["status"], "PASS")
 
         # 2. Failing fixture: Adaptive is 20% slower than min(Static, Dynamic)
         failing_data = pd.DataFrame([
@@ -149,6 +158,68 @@ class TestAnalysisPipeline(unittest.TestCase):
         passed_fail, res_fail = run_pass_fail_check(failing_data)
         self.assertFalse(passed_fail)
         self.assertFalse(res_fail.iloc[0]["passed"])
+        self.assertEqual(res_fail.iloc[0]["status"], "FAIL")
+
+    def test_missing_policy_gives_not_evaluated(self):
+        """Test 1: A graph with a missing policy gives NOT EVALUATED, not PASS."""
+        # roadNet-CA fixture missing Pure-Dynamic
+        partial_data = pd.DataFrame([
+            {"graph": "roadNet-CA", "policy": "Adaptive", "median_ms": 1277.51, "ci_lower_ms": 1240.0, "ci_upper_ms": 1310.0, "n_runs": 1},
+            {"graph": "roadNet-CA", "policy": "Pure-Static", "median_ms": 2771.70, "ci_lower_ms": 2700.0, "ci_upper_ms": 2850.0, "n_runs": 1},
+            # Pure-Dynamic is missing
+        ])
+        overall_pass, res = run_pass_fail_check(partial_data)
+        self.assertFalse(overall_pass, "Overall pass must be False if any graph is NOT EVALUATED")
+        self.assertEqual(res.iloc[0]["status"], "NOT EVALUATED")
+        self.assertNotEqual(res.iloc[0]["status"], "PASS")
+
+    def test_threshold_ratio_boundary(self):
+        """Test 2: Adaptive 4% slower than the better fixed policy gives PASS. 6% slower gives FAIL."""
+        # 4% slower: 104.0 vs 100.0 (ratio 1.04 <= 1.05) -> PASS
+        pass_data = pd.DataFrame([
+            {"graph": "g1", "policy": "Adaptive", "median_ms": 104.0, "ci_lower_ms": 102.0, "ci_upper_ms": 106.0, "n_runs": 15},
+            {"graph": "g1", "policy": "Pure-Static", "median_ms": 100.0, "ci_lower_ms": 98.0, "ci_upper_ms": 102.0, "n_runs": 15},
+            {"graph": "g1", "policy": "Pure-Dynamic", "median_ms": 200.0, "ci_lower_ms": 195.0, "ci_upper_ms": 205.0, "n_runs": 15},
+        ])
+        overall_p, res_p = run_pass_fail_check(pass_data)
+        self.assertTrue(overall_p)
+        self.assertEqual(res_p.iloc[0]["status"], "PASS")
+
+        # 6% slower: 106.0 vs 100.0 (ratio 1.06 > 1.05) -> FAIL
+        fail_data = pd.DataFrame([
+            {"graph": "g1", "policy": "Adaptive", "median_ms": 106.0, "ci_lower_ms": 104.0, "ci_upper_ms": 108.0, "n_runs": 15},
+            {"graph": "g1", "policy": "Pure-Static", "median_ms": 100.0, "ci_lower_ms": 98.0, "ci_upper_ms": 102.0, "n_runs": 15},
+            {"graph": "g1", "policy": "Pure-Dynamic", "median_ms": 200.0, "ci_lower_ms": 195.0, "ci_upper_ms": 205.0, "n_runs": 15},
+        ])
+        overall_f, res_f = run_pass_fail_check(fail_data)
+        self.assertFalse(overall_f)
+        self.assertEqual(res_f.iloc[0]["status"], "FAIL")
+
+    def test_single_run_no_ci(self):
+        """Test 3: A cell with n = 1 prints 'n=1, no CI'."""
+        # 1. bootstrap_ci_median on single sample returns NaN for bounds
+        med, lo, hi = bootstrap_ci_median(np.array([123.45]))
+        self.assertEqual(med, 123.45)
+        self.assertTrue(np.isnan(lo))
+        self.assertTrue(np.isnan(hi))
+
+        # 2. generate_table2_policy_times formats n=1 cell with 'n=1, no CI'
+        single_run_stats = pd.DataFrame([
+            {"graph": "roadNet-CA", "policy": "Adaptive", "median_ms": 1277.51, "ci_lower_ms": np.nan, "ci_upper_ms": np.nan, "n_runs": 1}
+        ])
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            t2 = generate_table2_policy_times(single_run_stats, out_dir=tmp_dir)
+            cell_val = t2.iloc[0]["Adaptive"]
+            self.assertIn("n=1, no CI", cell_val)
+            self.assertIn("1277.51 (n=1)", cell_val)
+
+    def test_script_exits_nonzero_on_not_evaluated(self):
+        """Test 4: The script exits non-zero if any graph is NOT EVALUATED."""
+        stats_script = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "analysis", "stats.py"))
+        res = subprocess.run([sys.executable, stats_script], capture_output=True, text=True)
+        self.assertNotEqual(res.returncode, 0, "stats.py must exit non-zero when evaluation graphs are NOT EVALUATED or FAIL")
+        self.assertIn("NOT EVALUATED", res.stdout)
+        self.assertIn("OVERALL STATUS: FAIL", res.stdout)
 
     def test_figure_regeneration_consistency(self):
         """Regenerating a figure from identical data produces exact duplicate data output."""

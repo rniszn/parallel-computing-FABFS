@@ -68,6 +68,8 @@ def generate_table1_graph_properties(graphs_csv_path="results/graphs.csv", out_d
 def generate_table2_policy_times(stats_df, out_dir="results/tables"):
     """
     Table 2: Median total time with 95% bootstrap CI for each policy and graph.
+    Rounds displayed interval to 2 decimal places, and prints n next to every median.
+    For n = 1 round, prints "n=1, no CI" in place of degenerate interval [x, x].
     """
     graphs = sorted(stats_df["graph"].unique())
     policies = ["Adaptive", "Pure-Static", "Pure-Dynamic", "Oracle-Replay"]
@@ -81,7 +83,13 @@ def generate_table2_policy_times(stats_df, out_dir="results/tables"):
                 med = match.iloc[0]["median_ms"]
                 lo = match.iloc[0]["ci_lower_ms"]
                 hi = match.iloc[0]["ci_upper_ms"]
-                row[p] = f"{med:.2f} [{lo:.2f}, {hi:.2f}]"
+                n_runs = int(match.iloc[0]["n_runs"])
+                if pd.isna(med):
+                    row[p] = "N/A"
+                elif n_runs == 1 or pd.isna(lo) or pd.isna(hi):
+                    row[p] = f"{med:.2f} (n=1) [n=1, no CI]"
+                else:
+                    row[p] = f"{med:.2f} (n={n_runs}) [{lo:.2f}, {hi:.2f}]"
             else:
                 row[p] = "N/A"
         rows.append(row)
@@ -111,6 +119,7 @@ def generate_table2_policy_times(stats_df, out_dir="results/tables"):
 def generate_table3_pass_fail(pf_df, out_dir="results/tables"):
     """
     Table 3: Pass/fail results per graph.
+    If required policies are missing or incomplete, Result is "NOT EVALUATED".
     """
     table3 = pd.DataFrame({
         "Graph": pf_df["graph"],
@@ -119,7 +128,7 @@ def generate_table3_pass_fail(pf_df, out_dir="results/tables"):
         "Dynamic (ms)": pf_df["dynamic_ms"].apply(lambda x: f"{x:.2f}" if pd.notnull(x) else "N/A"),
         "Best Fixed (ms)": pf_df["best_fixed_ms"].apply(lambda x: f"{x:.2f}" if pd.notnull(x) else "N/A"),
         "Diff (%)": pf_df["diff_pct"].apply(lambda x: f"{x:+.2f}%" if pd.notnull(x) else "N/A"),
-        "Result": pf_df["passed"].apply(lambda x: "PASS" if x else "FAIL")
+        "Result": pf_df["status"]
     })
 
     # CSV output
