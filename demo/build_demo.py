@@ -216,14 +216,17 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     datasets_json = json.dumps(datasets_dict)
     thresh_json = json.dumps(thresh)
 
+    calib_commit = thresh.get("calibration_commit", "8dd8ad730e2eb6c5bf6e9491eb8401f9c7d792e3")
+
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FABFS Multi-Graph Adaptive BFS Telemetry & Evaluator Visualizer</title>
+<title>FABFS Multi-Graph Adaptive BFS Telemetry &amp; Evaluator Visualizer</title>
 <style>
   :root {{
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --bg-dark: #0b0f19;
     --panel-bg: #131b2e;
     --card-bg: #090d16;
@@ -237,31 +240,60 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     --mode-seq: #38bdf8;
     --mode-static: #4ade80;
     --mode-dynamic: #fb923c;
+    --btn-bg: #1e293b;
+    --btn-hover: #334155;
+    --btn-primary: #0284c7;
+    --btn-primary-hover: #0369a1;
   }}
+
+  @media (prefers-color-scheme: light) {{
+    :root {{
+      --bg-dark: #f8fafc;
+      --panel-bg: #ffffff;
+      --card-bg: #f1f5f9;
+      --border-color: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --accent-blue: #0284c7;
+      --accent-green: #16a34a;
+      --accent-orange: #ea580c;
+      --mode-seq: #0284c7;
+      --mode-static: #16a34a;
+      --mode-dynamic: #ea580c;
+      --btn-bg: #e2e8f0;
+      --btn-hover: #cbd5e1;
+      --btn-primary: #0284c7;
+      --btn-primary-hover: #0369a1;
+    }}
+  }}
+
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg-dark);
     color: var(--text-primary);
-    overflow: hidden;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
   }}
+
+  /* Top Header */
   header {{
     background: var(--panel-bg);
     border-bottom: 1px solid var(--border-color);
-    padding: 10px 20px;
+    padding: 10px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     z-index: 10;
+    flex-wrap: wrap;
   }}
   .brand {{
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }}
   .logo {{
     font-weight: 800;
@@ -270,72 +302,320 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     color: var(--text-primary);
   }}
   .logo span {{ color: var(--accent-blue); }}
-  .tag {{
-    font-size: 0.72rem;
-    background: #0284c7;
-    color: white;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-weight: 600;
+  
+  /* Persistent Walkthrough / Real Trace Badge */
+  .walkthrough-badge {{
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    border: 1px solid;
+    transition: all 0.2s ease;
   }}
+  .badge-synthetic {{
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--accent-blue);
+    border-color: rgba(56, 189, 248, 0.4);
+  }}
+  .badge-real {{
+    background: rgba(74, 222, 128, 0.16);
+    color: var(--accent-green);
+    border-color: rgba(74, 222, 128, 0.4);
+  }}
+
   .graph-select-container {{
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }}
   .graph-select-label {{
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
   }}
   #graphSelect {{
-    background: #090d16;
-    color: var(--accent-blue);
+    background: var(--card-bg);
+    color: var(--text-primary);
     border: 1px solid var(--border-color);
-    padding: 6px 12px;
+    padding: 8px 12px;
     border-radius: 6px;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
     outline: none;
+    min-height: 44px;
   }}
   #graphSelect:hover, #graphSelect:focus {{
     border-color: var(--accent-blue);
   }}
+
   .meta-pills {{
     display: flex;
-    gap: 10px;
-    font-size: 0.78rem;
+    gap: 8px;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    flex-wrap: wrap;
   }}
   .pill {{
-    background: #090d16;
-    padding: 4px 10px;
+    background: var(--card-bg);
+    padding: 5px 10px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
     white-space: nowrap;
   }}
   .pill strong {{ color: var(--text-primary); }}
 
+  /* Main Container Layout */
   .main-container {{
     display: flex;
     flex: 1;
     overflow: hidden;
   }}
+
   .canvas-panel {{
     flex: 1;
     position: relative;
-    background: #060911;
+    background: var(--bg-dark);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }}
+
+  /* Mode Legend Toolbar */
+  .canvas-mode-legend {{
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 6;
+    flex-wrap: wrap;
+  }}
+  .mode-legend-tag {{
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: rgba(11, 15, 25, 0.85);
+    border: 1px solid var(--border-color);
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(6px);
+  }}
+  .mode-legend-tag .dot {{
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }}
+
+  /* Beside-Graph Stats Overlay */
+  .canvas-live-stats {{
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: rgba(19, 27, 46, 0.92);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 14px;
+    z-index: 6;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    min-width: 250px;
+  }}
+  .canvas-live-stats .stats-title {{
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }}
+  .live-stat-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    padding: 3px 0;
+    gap: 12px;
+  }}
+  .live-stat-row .lbl {{
+    color: var(--text-secondary);
+    font-weight: 500;
+  }}
+  .live-stat-row .val {{
+    font-weight: 700;
+    color: var(--text-primary);
+  }}
+  .val-mode-tag {{
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    border: 1px solid;
+  }}
+  .val-mode-tag.mode-SEQ {{
+    background: rgba(56, 189, 248, 0.16);
+    color: var(--mode-seq);
+    border-color: var(--mode-seq);
+  }}
+  .val-mode-tag.mode-STATIC {{
+    background: rgba(74, 222, 128, 0.16);
+    color: var(--mode-static);
+    border-color: var(--mode-static);
+  }}
+  .val-mode-tag.mode-DYNAMIC {{
+    background: rgba(251, 146, 60, 0.16);
+    color: var(--mode-dynamic);
+    border-color: var(--mode-dynamic);
+  }}
+
+  /* Graph Canvas */
   canvas {{
     display: block;
     width: 100%;
     height: 100%;
+    flex: 1;
   }}
+
+  /* One-Sentence Mode Explanation Bar Under Graph */
+  .mode-meaning-bar {{
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 9px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+  }}
+  .mode-meaning-bar .mode-pill {{
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }}
+  #modeMeaningText {{
+    flex: 1;
+    line-height: 1.4;
+  }}
+
+  /* Floating / Fixed Controls Bar */
+  .controls-bar {{
+    background: rgba(19, 27, 46, 0.95);
+    border-top: 1px solid var(--border-color);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    z-index: 5;
+    flex-wrap: wrap;
+  }}
+  button.control-btn {{
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 9px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 44px;
+    min-width: 44px;
+    transition: all 0.15s ease;
+  }}
+  button.control-btn:hover {{
+    background: var(--btn-hover);
+    border-color: var(--accent-blue);
+  }}
+  button.control-btn.primary {{
+    background: var(--btn-primary);
+    border-color: var(--accent-blue);
+    color: white;
+  }}
+  button.control-btn.primary:hover {{
+    background: var(--btn-primary-hover);
+  }}
+
+  .level-badge {{
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+    min-width: 140px;
+    text-align: center;
+    padding: 6px 12px;
+    background: var(--card-bg);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+  }}
+
+  .slider-container {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }}
+  input[type=range] {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 150px;
+    height: 8px;
+    border-radius: 4px;
+    background: #24324d;
+    outline: none;
+  }}
+  input[type=range]::-webkit-slider-thumb {{
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(56,189,248,0.8);
+  }}
+
+  .keyboard-hint {{
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }}
+  .keyboard-hint kbd {{
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 0.74rem;
+    color: var(--text-primary);
+  }}
+
+  /* Side Panel */
   .side-panel {{
     width: 440px;
     background: var(--panel-bg);
@@ -349,7 +629,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     border-bottom: 1px solid var(--border-color);
   }}
   .panel-title {{
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
@@ -357,75 +637,11 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }}
-  .controls-bar {{
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(19, 27, 46, 0.95);
-    border: 1px solid var(--border-color);
-    padding: 8px 18px;
-    border-radius: 32px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    backdrop-filter: blur(10px);
-    z-index: 5;
-  }}
-  button {{
-    background: #24324d;
-    border: none;
-    color: white;
-    padding: 7px 14px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.82rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: background 0.15s;
-  }}
-  button:hover {{ background: #334568; }}
-  button.primary {{ background: #0284c7; }}
-  button.primary:hover {{ background: #0369a1; }}
-  .level-badge {{
-    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--accent-blue);
-    min-width: 110px;
-    text-align: center;
   }}
-  .slider-container {{
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }}
-  input[type=range] {{
-    -webkit-appearance: none;
-    appearance: none;
-    width: 130px;
-    height: 6px;
-    border-radius: 3px;
-    background: #24324d;
-    outline: none;
-  }}
-  input[type=range]::-webkit-slider-thumb {{
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    cursor: pointer;
-    box-shadow: 0 0 6px rgba(56,189,248,0.8);
-  }}
-
   .mode-indicator {{
     display: inline-block;
-    padding: 6px 14px;
+    padding: 7px 16px;
     border-radius: 8px;
     font-weight: 800;
     font-size: 1.05rem;
@@ -444,21 +660,21 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
   }}
   .stat-card {{
     background: var(--card-bg);
-    padding: 9px 12px;
+    padding: 10px 12px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
   }}
-  .stat-label {{ font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 3px; }}
-  .stat-value {{ font-size: 1.05rem; font-weight: 700; color: var(--text-primary); }}
-  .stat-sub {{ font-size: 0.68rem; color: var(--text-secondary); margin-top: 2px; }}
+  .stat-label {{ font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 3px; font-weight: 600; }}
+  .stat-value {{ font-size: 1.08rem; font-weight: 700; color: var(--text-primary); }}
+  .stat-sub {{ font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }}
 
   .decision-box {{
     background: var(--card-bg);
     border-left: 4px solid var(--accent-blue);
-    padding: 11px 13px;
+    padding: 12px 14px;
     border-radius: 4px;
-    font-size: 0.8rem;
-    line-height: 1.45;
+    font-size: 0.84rem;
+    line-height: 1.5;
     color: var(--text-secondary);
   }}
   .decision-box strong {{ color: var(--text-primary); }}
@@ -467,50 +683,61 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.74rem;
-    margin-bottom: 5px;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
   }}
   .legend-dot {{
     width: 10px;
     height: 10px;
     border-radius: 50%;
   }}
-  .toast {{
-    position: absolute;
-    top: 16px;
-    left: 20px;
-    background: rgba(9, 13, 22, 0.9);
-    border: 1px solid var(--border-color);
-    padding: 8px 14px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+
+  /* Bottom Small Footer */
+  footer.app-footer {{
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 6px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.74rem;
     color: var(--text-secondary);
-    backdrop-filter: blur(6px);
-    pointer-events: none;
-    z-index: 5;
+    flex-wrap: wrap;
+    gap: 8px;
+  }}
+  footer.app-footer code {{
+    background: var(--card-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    color: var(--accent-blue);
+    font-family: monospace;
+  }}
+  .footer-sep {{
+    margin: 0 4px;
+    color: var(--border-color);
   }}
 
-  /* Research Questions Button and Modal */
+  /* Research Questions Modal */
   .rq-button {{
     background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
     color: white;
     border: 1px solid #38bdf8;
-    padding: 6px 14px;
+    padding: 8px 14px;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.84rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    min-height: 44px;
     white-space: nowrap;
+    transition: all 0.2s;
   }}
   .rq-button:hover {{
     background: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
     box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
-    transform: translateY(-1px);
   }}
   .modal-overlay {{
     position: fixed;
@@ -518,19 +745,17 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(4, 7, 13, 0.84);
+    background: rgba(4, 7, 13, 0.85);
     backdrop-filter: blur(8px);
     z-index: 100;
     display: none;
     align-items: center;
     justify-content: center;
   }}
-  .modal-overlay.active {{
-    display: flex;
-  }}
+  .modal-overlay.active {{ display: flex; }}
   .modal-content {{
-    background: #111827;
-    border: 1px solid #24324d;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     width: 920px;
     max-width: 94vw;
@@ -542,8 +767,8 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
   }}
   .modal-header {{
     padding: 16px 22px;
-    background: #151e32;
-    border-bottom: 1px solid #24324d;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -554,27 +779,19 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
   .modal-title {{
     font-size: 1.15rem;
     font-weight: 800;
-    color: #f8fafc;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    color: var(--text-primary);
   }}
-  .modal-title span {{
-    color: var(--accent-blue);
-  }}
+  .modal-title span {{ color: var(--accent-blue); }}
   .close-btn {{
     background: transparent;
     border: none;
-    color: #94a3b8;
-    font-size: 1.4rem;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
     cursor: pointer;
     padding: 4px 8px;
-    border-radius: 4px;
+    min-height: 44px;
+    min-width: 44px;
     line-height: 1;
-  }}
-  .close-btn:hover {{
-    color: #f8fafc;
-    background: #1f2937;
   }}
   .modal-body {{
     padding: 22px;
@@ -583,14 +800,10 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     gap: 14px;
   }}
   .rq-card {{
-    background: #090d16;
-    border: 1px solid #1e293b;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 14px 18px;
-    transition: border-color 0.2s;
-  }}
-  .rq-card:hover {{
-    border-color: #38bdf8;
   }}
   .rq-question-header {{
     display: flex;
@@ -601,28 +814,25 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
   }}
   .rq-num {{
     font-weight: 800;
-    font-size: 0.78rem;
-    color: #38bdf8;
+    font-size: 0.8rem;
+    color: var(--accent-blue);
     background: rgba(56, 189, 248, 0.12);
     padding: 2px 8px;
     border-radius: 4px;
     border: 1px solid rgba(56, 189, 248, 0.3);
-    white-space: nowrap;
   }}
   .rq-question-text {{
     font-weight: 700;
     font-size: 0.98rem;
-    color: #f8fafc;
+    color: var(--text-primary);
     flex: 1;
   }}
   .rq-verdict {{
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     font-weight: 800;
-    padding: 2px 10px;
+    padding: 3px 10px;
     border-radius: 20px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
   }}
   .verdict-yes {{
     background: rgba(74, 222, 128, 0.15);
@@ -635,39 +845,147 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     border: 1px solid rgba(192, 132, 252, 0.4);
   }}
   .rq-answer-body {{
-    font-size: 0.84rem;
+    font-size: 0.86rem;
     line-height: 1.5;
-    color: #cbd5e1;
+    color: var(--text-secondary);
     margin-bottom: 10px;
   }}
   .rq-telemetry-box {{
-    background: #111827;
-    border-left: 3px solid #38bdf8;
+    background: var(--panel-bg);
+    border-left: 3px solid var(--accent-blue);
     padding: 8px 12px;
-    font-size: 0.78rem;
-    color: #94a3b8;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
     border-radius: 4px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
   }}
   .rq-action-btn {{
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #38bdf8;
-    padding: 4px 10px;
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    color: var(--accent-blue);
+    padding: 6px 12px;
     border-radius: 4px;
-    font-size: 0.74rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
+    min-height: 44px;
   }}
-  .rq-action-btn:hover {{
-    background: #0284c7;
-    color: white;
-    border-color: #38bdf8;
+
+  /* Responsive Phone Layout (< 900px) */
+  @media (max-width: 900px) {{
+    body {{
+      height: auto;
+      overflow-y: auto;
+    }}
+    header {{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }}
+    .main-container {{
+      flex-direction: column;
+      overflow: visible;
+      height: auto;
+    }}
+    .canvas-panel {{
+      min-height: 540px;
+      height: auto;
+      overflow: visible;
+    }}
+    canvas {{
+      height: 420px !important;
+      min-height: 380px;
+    }}
+    .side-panel {{
+      width: 100% !important;
+      border-left: none;
+      border-top: 1px solid var(--border-color);
+      overflow: visible;
+    }}
+    .canvas-mode-legend {{
+      position: static;
+      margin: 10px 14px 4px 14px;
+    }}
+    .canvas-live-stats {{
+      position: static;
+      margin: 6px 14px 12px 14px;
+      width: auto;
+    }}
+    .controls-bar {{
+      gap: 10px;
+      padding: 12px;
+    }}
+  }}
+
+  @media (max-width: 480px) {{
+    header {{
+      padding: 10px;
+    }}
+    .logo {{
+      font-size: 1.1rem;
+    }}
+    .walkthrough-badge {{
+      font-size: 0.75rem;
+      padding: 3px 8px;
+    }}
+    #graphSelect {{
+      width: 100%;
+      font-size: 0.88rem;
+    }}
+    .meta-pills {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }}
+    .controls-bar {{
+      flex-direction: column;
+      align-items: stretch;
+    }}
+    .controls-group {{
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }}
+    button.control-btn {{
+      flex: 1;
+      min-height: 44px;
+      font-size: 0.88rem;
+    }}
+    .level-badge {{
+      width: 100%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }}
+    .slider-container {{
+      width: 100%;
+      justify-content: center;
+    }}
+    input[type=range] {{
+      width: 100%;
+      min-height: 44px;
+    }}
+    .mode-meaning-bar {{
+      font-size: 0.85rem;
+      padding: 10px 12px;
+    }}
+    .live-stat-row {{
+      font-size: 0.84rem;
+    }}
+    .panel-section {{
+      padding: 12px 14px;
+    }}
+    footer.app-footer {{
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px 12px;
+    }}
   }}
 </style>
 </head>
@@ -676,7 +994,10 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
 <header>
   <div class="brand">
     <div class="logo">FABFS <span>Visualizer</span></div>
-    <div class="tag">M10 Multi-Graph</div>
+    <!-- Persistent Walkthrough / Real Trace Badge -->
+    <div class="walkthrough-badge badge-synthetic" id="traceTypeBadge">
+      &#9881; Synthetic walkthrough
+    </div>
   </div>
 
   <div class="graph-select-container">
@@ -704,20 +1025,69 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
 
 <div class="main-container">
   <div class="canvas-panel">
-    <div class="toast" id="viewModeToast">
-      2D Concentric Topology View &bull; Step through levels to watch frontier pulse and mode transitions.
+    <!-- Mode Legend Toolbar -->
+    <div class="canvas-mode-legend">
+      <div class="mode-legend-tag"><span class="dot" style="background: #38bdf8;"></span> SEQ (|F| &lt; 1,024)</div>
+      <div class="mode-legend-tag"><span class="dot" style="background: #4ade80;"></span> STATIC (&alpha;=15.3%)</div>
+      <div class="mode-legend-tag"><span class="dot" style="background: #fb923c;"></span> DYNAMIC (Work-Steal)</div>
     </div>
-    <canvas id="graphCanvas"></canvas>
-    
-    <div class="controls-bar">
-      <button onclick="prevLevel()">&#9664; Prev</button>
-      <button class="primary" id="playBtn" onclick="togglePlay()">&#9654; Play</button>
-      <button onclick="nextLevel()">Next &#9654;</button>
-      <button onclick="resetBFS()">&#8634; Reset</button>
-      <div class="slider-container">
-        <input type="range" id="levelSlider" min="0" max="3" value="0" oninput="seekLevel(parseInt(this.value))">
+
+    <!-- Beside-Graph Stats Overlay (Frontier Size, Mode, Chunk Count, CPU/GPU Time) -->
+    <div class="canvas-live-stats" id="canvasLiveStats">
+      <div class="stats-title">
+        <span>Active Level Telemetry</span>
+        <span id="liveLevelNum">Level 1 of 4</span>
       </div>
-      <div class="level-badge" id="levelIndicator">Level 0 / 3</div>
+      <div class="live-stat-row">
+        <span class="lbl">Frontier Size |F<sub>l</sub>|:</span>
+        <span class="val" id="liveFrontier">0</span>
+      </div>
+      <div class="live-stat-row">
+        <span class="lbl">Mode Chosen:</span>
+        <span class="val-mode-tag mode-SEQ" id="liveMode">SEQ MODE</span>
+      </div>
+      <div class="live-stat-row">
+        <span class="lbl">Chunk Count (DYNAMIC):</span>
+        <span class="val" id="liveChunks">N/A (SEQ)</span>
+      </div>
+      <div class="live-stat-row">
+        <span class="lbl">CPU / GPU Time:</span>
+        <span class="val" id="liveDeviceTimes">CPU: 0 us | GPU: 0 us</span>
+      </div>
+      <div class="live-stat-row">
+        <span class="lbl">Total Level Time:</span>
+        <span class="val" id="liveTotalTime">0.0 us</span>
+      </div>
+    </div>
+
+    <canvas id="graphCanvas"></canvas>
+
+    <!-- One-Sentence Mode Explanation Bar Under Graph -->
+    <div class="mode-meaning-bar" id="modeMeaningBar">
+      <span class="mode-pill mode-SEQ" id="meaningPill">SEQ</span>
+      <span id="modeMeaningText">SEQ Mode: A single CPU core processes the frontier in L1/L2 cache without thread synchronization or GPU kernel launch latency.</span>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="controls-group">
+        <button id="prevBtn" class="control-btn" onclick="prevLevel()" title="Previous Level (Left Arrow)">&#9664; Prev</button>
+        <button class="control-btn primary" id="playBtn" onclick="togglePlay()" title="Play / Pause (Space)">&#9654; Play</button>
+        <button id="nextBtn" class="control-btn" onclick="nextLevel()" title="Next Level (Right Arrow)">Next &#9654;</button>
+        <button id="resetBtn" class="control-btn" onclick="resetBFS()" title="Reset to Level 0">&#8634; Reset</button>
+      </div>
+
+      <div class="slider-container">
+        <input type="range" id="levelSlider" min="0" max="3" value="0" oninput="seekLevel(parseInt(this.value))" aria-label="Level progress slider">
+      </div>
+
+      <div class="level-badge" id="levelIndicator">Level 1 of 4</div>
+
+      <div class="keyboard-hint">
+        <span>Shortcuts:</span>
+        <kbd>&#9664;</kbd> <kbd>&#9654;</kbd> <span>Step</span>
+        <kbd>Space</kbd> <span>Play</span>
+      </div>
     </div>
   </div>
 
@@ -759,7 +1129,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     </div>
 
     <div class="panel-section">
-      <div class="panel-title">Dispatch & Scheduling Metrics</div>
+      <div class="panel-title">Dispatch &amp; Scheduling Metrics</div>
       <div class="grid-2">
         <div class="stat-card">
           <div class="stat-label">Chunk Size (C_l)</div>
@@ -786,7 +1156,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
 
     <div class="panel-section">
       <div class="panel-title">Calibration Constants (Frozen Gate 1)</div>
-      <div style="font-size: 0.74rem; color: var(--text-secondary); line-height: 1.6;">
+      <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6;">
         <div>&bull; T_min = <strong>{thresh.get('T_min', 1024)}</strong> vertices (Sequential threshold)</div>
         <div>&bull; T_CV = <strong>{thresh.get('T_CV', 1.5)}</strong> (Degree skew threshold)</div>
         <div>&bull; T_par = <strong>{thresh.get('T_par', 8192)}</strong> vertices (Parallel cutoff)</div>
@@ -799,12 +1169,12 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     <div class="panel-section">
       <div class="panel-title">
         <span>What Are We Asking?</span>
-        <button onclick="toggleRQModal()" style="padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; background: #0284c7; cursor:pointer;">Scorecard (5/5)</button>
+        <button onclick="toggleRQModal()" class="rq-action-btn" style="min-height:30px; padding:3px 8px;">Scorecard (5/5)</button>
       </div>
-      <div style="font-size: 0.74rem; color: var(--text-secondary); line-height: 1.55;">
+      <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55;">
         <div style="margin-bottom: 5px;"><strong>Q1: Best strategy changes across levels?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (SEQ &rarr; STATIC &rarr; DYNAMIC)</div>
         <div style="margin-bottom: 5px;"><strong>Q2: Adaptive improves traversal time?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (+53.9% roadNet, +9.0% web-Google)</div>
-        <div style="margin-bottom: 5px;"><strong>Q3: Topology explains strategy?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (|F| & CV thresholds)</div>
+        <div style="margin-bottom: 5px;"><strong>Q3: Topology explains strategy?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (|F| &amp; CV thresholds)</div>
         <div style="margin-bottom: 5px;"><strong>Q4: How close to per-level oracle?</strong><br/><span style="color: #c084fc; font-weight:700;">&bull; Within 1.2% &ndash; 4.8%</span> of Oracle-Replay</div>
         <div><strong>Q5: Generalises across graph types?</strong><br/><span style="color: #4ade80; font-weight:700;">&bull; YES</span> (Road, Web, Social, R-MAT)</div>
       </div>
@@ -820,6 +1190,28 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     </div>
   </div>
 </div>
+
+<!-- Small Footer with Thresholds and Calibration Commit Hash -->
+<footer class="app-footer">
+  <div>
+    <strong>Calibration Commit:</strong> <code>{calib_commit}</code>
+    <span class="footer-sep">&bull;</span>
+    <strong>Status:</strong> {thresh.get('status', 'frozen').upper()}
+  </div>
+  <div>
+    <span>T<sub>min</sub>={thresh.get('T_min', 1024)}</span>
+    <span class="footer-sep">&bull;</span>
+    <span>T<sub>CV</sub>={thresh.get('T_CV', 1.5)}</span>
+    <span class="footer-sep">&bull;</span>
+    <span>T<sub>par</sub>={thresh.get('T_par', 8192)}</span>
+    <span class="footer-sep">&bull;</span>
+    <span>&alpha;={thresh.get('alpha', 0.1526)}</span>
+    <span class="footer-sep">&bull;</span>
+    <span>L={thresh.get('L_launch_us', 39.99)}&mu;s</span>
+    <span class="footer-sep">&bull;</span>
+    <span>C<sub>steal</sub>={thresh.get('C_steal_ns', 135.6)}ns</span>
+  </div>
+</footer>
 
 <script>
   const allDatasets = {datasets_json};
@@ -848,16 +1240,19 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     document.getElementById("pillVertices").innerText = Number(ds.nodes).toLocaleString();
     document.getElementById("pillEdges").innerText = Number(ds.edges).toLocaleString();
 
+    // Persistent Walkthrough vs Real Trace Badge update
+    const badge = document.getElementById("traceTypeBadge");
+    if (ds.key === "rmat10_seed1" || ds.has_node_layout) {{
+      badge.className = "walkthrough-badge badge-synthetic";
+      badge.innerHTML = "&#9881; Synthetic walkthrough";
+    }} else {{
+      badge.className = "walkthrough-badge badge-real";
+      badge.innerHTML = "&#9658; Real trace";
+    }}
+
     const slider = document.getElementById("levelSlider");
     slider.max = ds.levels.length - 1;
     slider.value = 0;
-
-    const toast = document.getElementById("viewModeToast");
-    if (ds.has_node_layout) {{
-      toast.innerHTML = `<strong>2D Concentric Topology View:</strong> ${{ds.name}} &bull; ${{ds.nodes}} nodes &bull; Step or Play to watch frontier expansion.`;
-    }} else {{
-      toast.innerHTML = `<strong>Frontier Wave & Mode Profile:</strong> ${{ds.name}} (${{ds.category}}) &bull; ${{ds.nodes.toLocaleString()}} vertices &bull; Click any level bar to inspect telemetry.`;
-    }}
 
     updateHUD();
     drawScene();
@@ -865,7 +1260,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
 
   function resizeCanvas() {{
     canvas.width = canvas.parentElement.clientWidth;
-    canvas.height = canvas.parentElement.clientHeight;
+    canvas.height = canvas.parentElement.clientHeight - 80;
     drawScene();
   }}
   window.addEventListener("resize", resizeCanvas);
@@ -1045,7 +1440,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
 
     // Degree Skew (CV) Curve overlay
     ctx.beginPath();
-    ctx.strokeStyle = "rgba(192, 132, 252, 0.75)"; // accent purple
+    ctx.strokeStyle = "rgba(192, 132, 252, 0.75)";
     ctx.lineWidth = 1.8;
     const maxCV = 7.0;
     for (let i = 0; i < numLevels; ++i) {{
@@ -1071,14 +1466,13 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     ctx.fillText("T_CV = 1.5", chartRight - 55, cvThreshY - 4);
 
     // Active Engine Architecture Schematic Diagram in Lower Canvas
-    drawEngineArchitectureDiagram(chartLeft, chartRight, chartBottom + 25, canvas.height - 75, levels[currentLevel]);
+    drawEngineArchitectureDiagram(chartLeft, chartRight, chartBottom + 25, canvas.height - 35, levels[currentLevel]);
   }}
 
   function drawEngineArchitectureDiagram(left, right, top, bottom, lvlData) {{
     const w = right - left;
     const h = bottom - top;
 
-    // Background card for schematic
     ctx.fillStyle = "#0c1220";
     ctx.strokeStyle = "#1e293b";
     ctx.lineWidth = 1;
@@ -1087,7 +1481,6 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     ctx.fill();
     ctx.stroke();
 
-    // Schematic title
     ctx.fillStyle = "#94a3b8";
     ctx.font = "bold 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
     ctx.fillText("ACTIVE EXECUTION DISPATCH PIPELINE", left + 16, top + 22);
@@ -1095,7 +1488,6 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     const mode = lvlData ? lvlData.mode_chosen : "SEQ";
 
     if (mode === "SEQ") {{
-      // Diagram: Single CPU Thread pipeline
       ctx.fillStyle = "#38bdf8";
       ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
       ctx.fillText("Single-Threaded Sequential CPU Expansion (Rule 1: |F| < 1,024)", left + 16, top + 44);
@@ -1104,14 +1496,12 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
       ctx.font = "12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
       ctx.fillText("Frontier fits in L1/L2 cache &bull; Deque lock & GPU launch overhead strictly eliminated.", left + 16, top + 64);
 
-      // Core box
       drawBox(left + 20, top + 76, 160, 34, "#38bdf8", "Thread 0 (Core 0)");
       drawArrow(left + 185, top + 93, left + 230, top + 93, "#38bdf8");
       drawBox(left + 235, top + 76, 200, 34, "#38bdf8", "Direct Bitvector Visitor");
       drawArrow(left + 440, top + 93, left + 485, top + 93, "#38bdf8");
       drawBox(left + 490, top + 76, 180, 34, "#38bdf8", "Zero Sync Overhead");
     }} else if (mode === "STATIC") {{
-      // Diagram: Edge-Balanced Static CPU/GPU Split
       ctx.fillStyle = "#4ade80";
       ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
       ctx.fillText("Deterministic Dual-Device Edge Split (Rule 2: Low Skew CV <= 1.5 or |F| <= 8,192)", left + 16, top + 44);
@@ -1125,7 +1515,6 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
       drawArrow(left + 420, top + 93, left + 465, top + 93, "#4ade80");
       drawBox(left + 470, top + 76, 200, 34, "#4ade80", "Global Barrier & Flip");
     }} else {{
-      // Diagram: Dynamic Work Stealing
       ctx.fillStyle = "#fb923c";
       ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
       ctx.fillText("Chase-Lev Work-Stealing Pool with Dynamic Chunking (Rule 3: High Skew CV > 1.5)", left + 16, top + 44);
@@ -1180,9 +1569,42 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     const data = ds.levels[currentLevel];
     if (!data) return;
 
-    document.getElementById("levelIndicator").innerText = `Level ${{currentLevel}} / ${{ds.levels.length - 1}}`;
+    // Step counter matching "Level 3 of 17"
+    const stepLabel = `Level ${{currentLevel + 1}} of ${{ds.levels.length}}`;
+    document.getElementById("levelIndicator").innerText = stepLabel;
+    document.getElementById("liveLevelNum").innerText = stepLabel;
     document.getElementById("levelSlider").value = currentLevel;
 
+    // Beside-Graph Live Stats
+    document.getElementById("liveFrontier").innerText = Number(data.frontier_size).toLocaleString();
+    const liveModeEl = document.getElementById("liveMode");
+    liveModeEl.className = `val-mode-tag mode-${{data.mode_chosen}}`;
+    liveModeEl.innerText = `${{data.mode_chosen}} MODE`;
+
+    const liveChunksEl = document.getElementById("liveChunks");
+    if (data.mode_chosen === "DYNAMIC") {{
+      liveChunksEl.innerText = `${{data.num_chunks}} chunks (C_l=${{data.chunk_size}})`;
+    }} else {{
+      liveChunksEl.innerText = `N/A (${{data.mode_chosen}})`;
+    }}
+    document.getElementById("liveDeviceTimes").innerText = `CPU: ${{data.t_cpu_us}} us | GPU: ${{data.t_gpu_us}} us`;
+    document.getElementById("liveTotalTime").innerText = `${{data.time_us}} us`;
+
+    // One-Sentence Mode Explanation Bar Under Canvas
+    const meaningPill = document.getElementById("meaningPill");
+    const meaningText = document.getElementById("modeMeaningText");
+    meaningPill.className = `mode-pill mode-${{data.mode_chosen}}`;
+    meaningPill.innerText = data.mode_chosen;
+
+    if (data.mode_chosen === "SEQ") {{
+      meaningText.innerText = "SEQ Mode: A single CPU core processes the frontier in L1/L2 cache without thread synchronization or GPU kernel launch latency.";
+    }} else if (data.mode_chosen === "STATIC") {{
+      meaningText.innerText = "STATIC Mode: Frontier edges are statically partitioned between CPU OpenMP threads and the GPU with deterministic dual-device load balancing.";
+    }} else {{
+      meaningText.innerText = "DYNAMIC Mode: CPU threads and GPU execute lock-free Chase-Lev deques with work-stealing to eliminate load imbalance on skewed hub nodes.";
+    }}
+
+    // Side Panel Telemetry
     const modeEl = document.getElementById("modeChosen");
     modeEl.className = `mode-indicator mode-${{data.mode_chosen}}`;
     modeEl.innerText = `${{data.mode_chosen}} MODE`;
@@ -1258,7 +1680,7 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
       timer = setInterval(nextLevel, intervalMs);
     }} else {{
       btn.innerHTML = "&#9654; Play";
-      btn.style.background = "#0284c7";
+      btn.style.background = "";
       clearInterval(timer);
     }}
   }}
@@ -1283,8 +1705,21 @@ def build_fabfs_demo_html(datasets_dict, default_dataset="rmat10_seed1", thresho
     }}
   }}
 
+  // Keyboard Navigation: Arrow Left / Right and Space
   window.addEventListener("keydown", (e) => {{
-    if (e.key === "Escape") {{
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+    if (e.key === "ArrowLeft") {{
+      e.preventDefault();
+      prevLevel();
+    }} else if (e.key === "ArrowRight") {{
+      e.preventDefault();
+      nextLevel();
+    }} else if (e.key === " " || e.code === "Space") {{
+      e.preventDefault();
+      togglePlay();
+    }} else if (e.key === "Home" || e.key === "r" || e.key === "R") {{
+      resetBFS();
+    }} else if (e.key === "Escape") {{
       const modal = document.getElementById("rqModal");
       if (modal && modal.classList.contains("active")) {{
         modal.classList.remove("active");
